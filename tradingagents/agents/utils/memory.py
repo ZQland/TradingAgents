@@ -57,7 +57,14 @@ class FinancialSituationMemory:
         )
 
     def get_memories(self, current_situation, n_matches=1):
-        """Find matching recommendations using OpenAI embeddings"""
+        """Find matching recommendations using embeddings.
+
+        Returns an empty list immediately if the collection has no entries,
+        avoiding an unnecessary embedding API call on cold/empty runs.
+        """
+        if self.situation_collection.count() == 0:
+            return []
+
         query_embedding = self.get_embedding(current_situation)
 
         results = self.situation_collection.query(
