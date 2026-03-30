@@ -1,3 +1,4 @@
+from tradingagents.agents.utils.agent_utils import ensure_str
 import functools
 import time
 import json
@@ -36,7 +37,7 @@ def create_trader(llm, memory):
 
         return {
             "messages": [result],
-            "trader_investment_plan": result.content,
+            "trader_investment_plan": ensure_str(result.content),
             "sender": name,
         }
 

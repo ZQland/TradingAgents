@@ -13,6 +13,8 @@ import pandas as pd
 from tqdm import tqdm
 import yfinance as yf
 from openai import OpenAI
+from google import genai
+from google.genai import types as genai_types
 from .config import get_config, set_config, DATA_DIR
 
 
@@ -702,106 +704,83 @@ def get_YFin_data(
     return filtered_data
 
 
+def _web_search_query(prompt):
+    """Run a web-grounded query using the configured LLM provider."""
+    config = get_config()
+    provider = config.get("llm_provider", "openai").lower()
+
+    if provider == "google":
+        client = genai.Client()
+        response = client.models.generate_content(
+            model=config["quick_think_llm"],
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                tools=[genai_types.Tool(google_search=genai_types.GoogleSearch())],
+                temperature=1.0,
+                max_output_tokens=16384,
+            ),
+        )
+        return response.text
+    else:
+        client = OpenAI(base_url=config["backend_url"])
+        response = client.responses.create(
+            model=config["quick_think_llm"],
+            input=[
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "input_text", "text": prompt}
+                    ],
+                }
+            ],
+            text={"format": {"type": "text"}},
+            reasoning={},
+            tools=[
+                {
+                    "type": "web_search_preview",
+                    "user_location": {"type": "approximate"},
+                    "search_context_size": "low",
+                }
+            ],
+            temperature=1,
+            max_output_tokens=4096,
+            top_p=1,
+            store=True,
+        )
+        return response.output[1].content[0].text
+
+
 def get_stock_news_openai(ticker, curr_date):
     config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
-
-    response = client.responses.create(
-        model=config["quick_think_llm"],
-        input=[
-            {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": f"Can you search Social Media for {ticker} from 7 days before {curr_date} to {curr_date}? Make sure you only get the data posted during that period.",
-                    }
-                ],
-            }
-        ],
-        text={"format": {"type": "text"}},
-        reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
-        temperature=1,
-        max_output_tokens=4096,
-        top_p=1,
-        store=True,
+    provider = config.get("llm_provider", "openai").lower()
+    if provider == "google":
+        return _web_search_query(
+            f"Search the web for recent news, social media discussions, and public sentiment about {ticker} stock from 7 days before {curr_date} to {curr_date}. Include Reddit posts, Twitter/X discussions, news articles, and analyst opinions. Summarize the key findings."
+        )
+    return _web_search_query(
+        f"Can you search Social Media for {ticker} from 7 days before {curr_date} to {curr_date}? Make sure you only get the data posted during that period."
     )
-
-    return response.output[1].content[0].text
 
 
 def get_global_news_openai(curr_date):
     config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
-
-    response = client.responses.create(
-        model=config["quick_think_llm"],
-        input=[
-            {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": f"Can you search global or macroeconomics news from 7 days before {curr_date} to {curr_date} that would be informative for trading purposes? Make sure you only get the data posted during that period.",
-                    }
-                ],
-            }
-        ],
-        text={"format": {"type": "text"}},
-        reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
-        temperature=1,
-        max_output_tokens=4096,
-        top_p=1,
-        store=True,
+    provider = config.get("llm_provider", "openai").lower()
+    if provider == "google":
+        return _web_search_query(
+            f"Search the web for global macroeconomic news and market-moving events from 7 days before {curr_date} to {curr_date} that would be relevant for stock trading. Include economic data releases, central bank decisions, geopolitical events, and market trends."
+        )
+    return _web_search_query(
+        f"Can you search global or macroeconomics news from 7 days before {curr_date} to {curr_date} that would be informative for trading purposes? Make sure you only get the data posted during that period."
     )
-
-    return response.output[1].content[0].text
 
 
 def get_fundamentals_openai(ticker, curr_date):
     config = get_config()
-    client = OpenAI(base_url=config["backend_url"])
-
-    response = client.responses.create(
-        model=config["quick_think_llm"],
-        input=[
-            {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": f"Can you search Fundamental for discussions on {ticker} during of the month before {curr_date} to the month of {curr_date}. Make sure you only get the data posted during that period. List as a table, with PE/PS/Cash flow/ etc",
-                    }
-                ],
-            }
-        ],
-        text={"format": {"type": "text"}},
-        reasoning={},
-        tools=[
-            {
-                "type": "web_search_preview",
-                "user_location": {"type": "approximate"},
-                "search_context_size": "low",
-            }
-        ],
-        temperature=1,
-        max_output_tokens=4096,
-        top_p=1,
-        store=True,
+    provider = config.get("llm_provider", "openai").lower()
+    if provider == "google":
+        return _web_search_query(
+            f"Search the web for fundamental analysis data on {ticker} stock as of {curr_date}. Find and list key metrics in a table format including: P/E ratio, P/S ratio, cash flow, revenue growth, earnings, debt-to-equity, and any other relevant fundamental indicators."
+        )
+    return _web_search_query(
+        f"Can you search Fundamental for discussions on {ticker} during of the month before {curr_date} to the month of {curr_date}. Make sure you only get the data posted during that period. List as a table, with PE/PS/Cash flow/ etc"
     )
-
-    return response.output[1].content[0].text

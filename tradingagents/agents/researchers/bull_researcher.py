@@ -1,4 +1,5 @@
 from langchain_core.messages import AIMessage
+from tradingagents.agents.utils.agent_utils import ensure_str
 import time
 import json
 
@@ -44,7 +45,7 @@ Use this information to deliver a compelling bull argument, refute the bear's co
 
         response = llm.invoke(prompt)
 
-        argument = f"Bull Analyst: {response.content}"
+        argument = f"Bull Analyst: {ensure_str(response.content)}"
 
         new_investment_debate_state = {
             "history": history + "\n" + argument,

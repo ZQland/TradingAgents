@@ -1,3 +1,4 @@
+from tradingagents.agents.utils.agent_utils import ensure_str
 import time
 import json
 
@@ -34,7 +35,7 @@ Engage actively by addressing any specific concerns raised, refuting the weaknes
 
         response = llm.invoke(prompt)
 
-        argument = f"Risky Analyst: {response.content}"
+        argument = f"Risky Analyst: {ensure_str(response.content)}"
 
         new_risk_debate_state = {
             "history": history + "\n" + argument,

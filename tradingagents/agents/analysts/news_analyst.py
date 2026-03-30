@@ -1,4 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from tradingagents.agents.utils.agent_utils import ensure_str
 import time
 import json
 
@@ -19,7 +20,7 @@ def create_news_analyst(llm, toolkit):
 
         system_message = (
             "You are a news researcher tasked with analyzing recent news and trends over the past week. Please write a comprehensive report of the current state of the world that is relevant for trading and macroeconomics. Look at news from EODHD, and finnhub to be comprehensive. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
-            + """ Make sure to append a Makrdown table at the end of the report to organize key points in the report, organized and easy to read."""
+            + """ Structure your report with clear Markdown headings (##, ###), bullet points for key events, and append a summary Markdown table at the end with columns: Event/Topic, Impact (Positive/Negative/Neutral), Relevance to Trading. Be thorough and do not cut your analysis short."""
         )
 
         prompt = ChatPromptTemplate.from_messages(
@@ -50,7 +51,7 @@ def create_news_analyst(llm, toolkit):
         report = ""
 
         if len(result.tool_calls) == 0:
-            report = result.content
+            report = ensure_str(result.content)
 
         return {
             "messages": [result],

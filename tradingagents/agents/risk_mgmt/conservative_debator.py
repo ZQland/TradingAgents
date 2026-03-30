@@ -1,4 +1,5 @@
 from langchain_core.messages import AIMessage
+from tradingagents.agents.utils.agent_utils import ensure_str
 import time
 import json
 
@@ -35,7 +36,7 @@ Engage by questioning their optimism and emphasizing the potential downsides the
 
         response = llm.invoke(prompt)
 
-        argument = f"Safe Analyst: {response.content}"
+        argument = f"Safe Analyst: {ensure_str(response.content)}"
 
         new_risk_debate_state = {
             "history": history + "\n" + argument,

@@ -15,6 +15,16 @@ from tradingagents.default_config import DEFAULT_CONFIG
 from langchain_core.messages import HumanMessage
 
 
+def ensure_str(content):
+    """Normalize LLM response content to a string.
+    Some providers (e.g. Google Gemini) return content as a list of parts."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "\n".join(str(c) for c in content)
+    return str(content)
+
+
 def create_msg_delete():
     def delete_messages(state):
         """Clear messages and add placeholder for Anthropic compatibility"""

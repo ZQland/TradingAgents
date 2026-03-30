@@ -1,3 +1,4 @@
+from tradingagents.agents.utils.agent_utils import ensure_str
 import time
 import json
 
@@ -37,19 +38,20 @@ Here is the debate:
 Debate History:
 {history}"""
         response = llm.invoke(prompt)
+        content = ensure_str(response.content)
 
         new_investment_debate_state = {
-            "judge_decision": response.content,
+            "judge_decision": content,
             "history": investment_debate_state.get("history", ""),
             "bear_history": investment_debate_state.get("bear_history", ""),
             "bull_history": investment_debate_state.get("bull_history", ""),
-            "current_response": response.content,
+            "current_response": content,
             "count": investment_debate_state["count"],
         }
 
         return {
             "investment_debate_state": new_investment_debate_state,
-            "investment_plan": response.content,
+            "investment_plan": content,
         }
 
     return research_manager_node

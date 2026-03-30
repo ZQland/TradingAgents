@@ -1,4 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from tradingagents.agents.utils.agent_utils import ensure_str
 import time
 import json
 
@@ -22,7 +23,7 @@ def create_fundamentals_analyst(llm, toolkit):
 
         system_message = (
             "You are a researcher tasked with analyzing fundamental information over the past week about a company. Please write a comprehensive report of the company's fundamental information such as financial documents, company profile, basic company financials, company financial history, insider sentiment and insider transactions to gain a full view of the company's fundamental information to inform traders. Make sure to include as much detail as possible. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
-            + " Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read.",
+            + " Structure your report with clear Markdown headings (##, ###) and bullet points. Append a summary Markdown table at the end with columns: Metric, Value, Interpretation. Be thorough and do not cut your analysis short.",
         )
 
         prompt = ChatPromptTemplate.from_messages(
@@ -54,7 +55,7 @@ def create_fundamentals_analyst(llm, toolkit):
         report = ""
 
         if len(result.tool_calls) == 0:
-            report = result.content
+            report = ensure_str(result.content)
 
         return {
             "messages": [result],
