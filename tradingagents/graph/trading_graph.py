@@ -99,7 +99,7 @@ class TradingAgentsGraph:
 
         self.propagator = Propagator()
         self.reflector = Reflector(self.quick_thinking_llm)
-        self.signal_processor = SignalProcessor(self.quick_thinking_llm)
+        self.signal_processor = SignalProcessor()
 
         # State tracking
         self.curr_state = None
