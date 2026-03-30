@@ -6,10 +6,18 @@ from langgraph.graph import END, StateGraph, START
 from langgraph.prebuilt import ToolNode
 
 from tradingagents.agents import *
-from tradingagents.agents.utils.agent_states import AgentState
+from tradingagents.agents.utils.agent_states import AgentState, AnalystState
 from tradingagents.agents.utils.agent_utils import Toolkit
 
 from .conditional_logic import ConditionalLogic
+
+# Maps analyst type to the report key it writes in the parent AgentState
+REPORT_KEY_MAP = {
+    "market": "market_report",
+    "social": "sentiment_report",
+    "news": "news_report",
+    "fundamentals": "fundamentals_report",
+}
 
 
 class GraphSetup:
@@ -40,6 +48,54 @@ class GraphSetup:
         self.risk_manager_memory = risk_manager_memory
         self.conditional_logic = conditional_logic
 
+    def _build_analyst_subgraph(self, analyst_type, analyst_node, tool_node):
+        """Build a subgraph for a single analyst with isolated messages."""
+        report_key = REPORT_KEY_MAP[analyst_type]
+
+        def adapted_analyst(state):
+            result = analyst_node(state)
+            adapted = {"messages": result["messages"]}
+            if result.get(report_key):
+                adapted["report"] = result[report_key]
+            return adapted
+
+        def should_continue(state):
+            last_message = state["messages"][-1]
+            if last_message.tool_calls:
+                return "tools"
+            return "clear"
+
+        def clear_messages(state):
+            return create_msg_delete()(state)
+
+        sg = StateGraph(AnalystState)
+        sg.add_node("analyst", adapted_analyst)
+        sg.add_node("tools", tool_node)
+        sg.add_node("clear", clear_messages)
+
+        sg.add_edge(START, "analyst")
+        sg.add_conditional_edges("analyst", should_continue, ["tools", "clear"])
+        sg.add_edge("tools", "analyst")
+        sg.add_edge("clear", END)
+
+        return sg.compile()
+
+    def _make_analyst_wrapper(self, analyst_type, subgraph):
+        """Create a parent-graph node that invokes an analyst subgraph."""
+        report_key = REPORT_KEY_MAP[analyst_type]
+
+        def wrapper(state):
+            sub_input = {
+                "messages": [("human", state["company_of_interest"])],
+                "company_of_interest": state["company_of_interest"],
+                "trade_date": state["trade_date"],
+                "report": "",
+            }
+            result = subgraph.invoke(sub_input)
+            return {report_key: result.get("report", "")}
+
+        return wrapper
+
     def setup_graph(
         self, selected_analysts=["market", "social", "news", "fundamentals"]
     ):
@@ -55,38 +111,13 @@ class GraphSetup:
         if len(selected_analysts) == 0:
             raise ValueError("Trading Agents Graph Setup Error: no analysts selected!")
 
-        # Create analyst nodes
-        analyst_nodes = {}
-        delete_nodes = {}
-        tool_nodes = {}
-
-        if "market" in selected_analysts:
-            analyst_nodes["market"] = create_market_analyst(
-                self.quick_thinking_llm, self.toolkit
-            )
-            delete_nodes["market"] = create_msg_delete()
-            tool_nodes["market"] = self.tool_nodes["market"]
-
-        if "social" in selected_analysts:
-            analyst_nodes["social"] = create_social_media_analyst(
-                self.quick_thinking_llm, self.toolkit
-            )
-            delete_nodes["social"] = create_msg_delete()
-            tool_nodes["social"] = self.tool_nodes["social"]
-
-        if "news" in selected_analysts:
-            analyst_nodes["news"] = create_news_analyst(
-                self.quick_thinking_llm, self.toolkit
-            )
-            delete_nodes["news"] = create_msg_delete()
-            tool_nodes["news"] = self.tool_nodes["news"]
-
-        if "fundamentals" in selected_analysts:
-            analyst_nodes["fundamentals"] = create_fundamentals_analyst(
-                self.quick_thinking_llm, self.toolkit
-            )
-            delete_nodes["fundamentals"] = create_msg_delete()
-            tool_nodes["fundamentals"] = self.tool_nodes["fundamentals"]
+        # Create analyst nodes and their subgraphs
+        analyst_creators = {
+            "market": lambda: create_market_analyst(self.quick_thinking_llm, self.toolkit),
+            "social": lambda: create_social_media_analyst(self.quick_thinking_llm, self.toolkit),
+            "news": lambda: create_news_analyst(self.quick_thinking_llm, self.toolkit),
+            "fundamentals": lambda: create_fundamentals_analyst(self.quick_thinking_llm, self.toolkit),
+        }
 
         # Create researcher and manager nodes
         bull_researcher_node = create_bull_researcher(
@@ -111,13 +142,13 @@ class GraphSetup:
         # Create workflow
         workflow = StateGraph(AgentState)
 
-        # Add analyst nodes to the graph
-        for analyst_type, node in analyst_nodes.items():
-            workflow.add_node(f"{analyst_type.capitalize()} Analyst", node)
-            workflow.add_node(
-                f"Msg Clear {analyst_type.capitalize()}", delete_nodes[analyst_type]
-            )
-            workflow.add_node(f"tools_{analyst_type}", tool_nodes[analyst_type])
+        # Build analyst subgraphs and add wrapper nodes (run in parallel)
+        for analyst_type in selected_analysts:
+            analyst_node = analyst_creators[analyst_type]()
+            tool_node = self.tool_nodes[analyst_type]
+            subgraph = self._build_analyst_subgraph(analyst_type, analyst_node, tool_node)
+            wrapper = self._make_analyst_wrapper(analyst_type, subgraph)
+            workflow.add_node(f"{analyst_type.capitalize()} Analyst", wrapper)
 
         # Add other nodes
         workflow.add_node("Bull Researcher", bull_researcher_node)
@@ -129,33 +160,15 @@ class GraphSetup:
         workflow.add_node("Safe Analyst", safe_analyst)
         workflow.add_node("Risk Judge", risk_manager_node)
 
-        # Define edges
-        # Start with the first analyst
-        first_analyst = selected_analysts[0]
-        workflow.add_edge(START, f"{first_analyst.capitalize()} Analyst")
+        # Fan-out: START -> all analyst wrappers (parallel execution)
+        for analyst_type in selected_analysts:
+            workflow.add_edge(START, f"{analyst_type.capitalize()} Analyst")
 
-        # Connect analysts in sequence
-        for i, analyst_type in enumerate(selected_analysts):
-            current_analyst = f"{analyst_type.capitalize()} Analyst"
-            current_tools = f"tools_{analyst_type}"
-            current_clear = f"Msg Clear {analyst_type.capitalize()}"
+        # Fan-in: all analyst wrappers -> Bull Researcher
+        for analyst_type in selected_analysts:
+            workflow.add_edge(f"{analyst_type.capitalize()} Analyst", "Bull Researcher")
 
-            # Add conditional edges for current analyst
-            workflow.add_conditional_edges(
-                current_analyst,
-                getattr(self.conditional_logic, f"should_continue_{analyst_type}"),
-                [current_tools, current_clear],
-            )
-            workflow.add_edge(current_tools, current_analyst)
-
-            # Connect to next analyst or to Bull Researcher if this is the last analyst
-            if i < len(selected_analysts) - 1:
-                next_analyst = f"{selected_analysts[i+1].capitalize()} Analyst"
-                workflow.add_edge(current_clear, next_analyst)
-            else:
-                workflow.add_edge(current_clear, "Bull Researcher")
-
-        # Add remaining edges
+        # Research debate edges
         workflow.add_conditional_edges(
             "Bull Researcher",
             self.conditional_logic.should_continue_debate,

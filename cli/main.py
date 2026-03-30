@@ -827,9 +827,11 @@ def run_analysis():
         message_buffer.current_report = None
         message_buffer.final_report = None
 
-        # Update agent status to in_progress for the first analyst
-        first_analyst = f"{selections['analysts'][0].value.capitalize()} Analyst"
-        message_buffer.update_agent_status(first_analyst, "in_progress")
+        # Update agent status to in_progress for all analysts (they run in parallel)
+        for analyst in selections["analysts"]:
+            message_buffer.update_agent_status(
+                f"{analyst.value.capitalize()} Analyst", "in_progress"
+            )
         update_display(layout)
 
         # Create spinner text
@@ -847,7 +849,7 @@ def run_analysis():
         # Stream the analysis
         trace = []
         for chunk in graph.graph.stream(init_agent_state, **args):
-            if len(chunk["messages"]) > 0:
+            if len(chunk.get("messages", [])) > 0:
                 # Get the last message from the chunk
                 last_message = chunk["messages"][-1]
 
@@ -880,33 +882,18 @@ def run_analysis():
                         "market_report", chunk["market_report"]
                     )
                     message_buffer.update_agent_status("Market Analyst", "completed")
-                    # Set next analyst to in_progress
-                    if "social" in selections["analysts"]:
-                        message_buffer.update_agent_status(
-                            "Social Analyst", "in_progress"
-                        )
 
                 if "sentiment_report" in chunk and chunk["sentiment_report"]:
                     message_buffer.update_report_section(
                         "sentiment_report", chunk["sentiment_report"]
                     )
                     message_buffer.update_agent_status("Social Analyst", "completed")
-                    # Set next analyst to in_progress
-                    if "news" in selections["analysts"]:
-                        message_buffer.update_agent_status(
-                            "News Analyst", "in_progress"
-                        )
 
                 if "news_report" in chunk and chunk["news_report"]:
                     message_buffer.update_report_section(
                         "news_report", chunk["news_report"]
                     )
                     message_buffer.update_agent_status("News Analyst", "completed")
-                    # Set next analyst to in_progress
-                    if "fundamentals" in selections["analysts"]:
-                        message_buffer.update_agent_status(
-                            "Fundamentals Analyst", "in_progress"
-                        )
 
                 if "fundamentals_report" in chunk and chunk["fundamentals_report"]:
                     message_buffer.update_report_section(
@@ -915,7 +902,15 @@ def run_analysis():
                     message_buffer.update_agent_status(
                         "Fundamentals Analyst", "completed"
                     )
-                    # Set all research team members to in_progress
+
+                # Check if all analysts are done, then start research team
+                all_analysts_done = all(
+                    message_buffer.agent_status.get(
+                        f"{a.value.capitalize()} Analyst"
+                    ) == "completed"
+                    for a in selections["analysts"]
+                )
+                if all_analysts_done and message_buffer.agent_status.get("Bull Researcher") != "in_progress":
                     update_research_team_status("in_progress")
 
                 # Research Team - Handle Investment Debate State

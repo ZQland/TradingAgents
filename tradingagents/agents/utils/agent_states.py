@@ -47,6 +47,13 @@ class RiskDebateState(TypedDict):
     count: Annotated[int, "Length of the current conversation"]  # Conversation length
 
 
+class AnalystState(MessagesState):
+    """Isolated state for analyst subgraphs with their own messages."""
+    company_of_interest: Annotated[str, "Company that we are interested in trading"]
+    trade_date: Annotated[str, "What date we are trading at"]
+    report: Annotated[str, "The analyst's output report"]
+
+
 class AgentState(MessagesState):
     company_of_interest: Annotated[str, "Company that we are interested in trading"]
     trade_date: Annotated[str, "What date we are trading at"]
