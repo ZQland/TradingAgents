@@ -27,6 +27,7 @@ from .setup import GraphSetup
 from .propagation import Propagator
 from .reflection import Reflector
 from .signal_processing import SignalProcessor
+from .newsletter import NewsletterGenerator
 
 
 class TradingAgentsGraph:
@@ -100,6 +101,7 @@ class TradingAgentsGraph:
         self.propagator = Propagator()
         self.reflector = Reflector(self.quick_thinking_llm)
         self.signal_processor = SignalProcessor()
+        self.newsletter_generator = NewsletterGenerator(self.quick_thinking_llm)
 
         # State tracking
         self.curr_state = None
@@ -184,8 +186,13 @@ class TradingAgentsGraph:
         # Log state
         self._log_state(trade_date, final_state)
 
-        # Return decision and processed signal
-        return final_state, self.process_signal(final_state["final_trade_decision"])
+        # Extract decision
+        decision = self.process_signal(final_state["final_trade_decision"])
+
+        # Generate and save newsletter summary
+        self._save_newsletter(company_name, trade_date, decision, final_state)
+
+        return final_state, decision
 
     def _log_state(self, trade_date, final_state):
         """Log the final state to a JSON file."""
@@ -228,6 +235,25 @@ class TradingAgentsGraph:
             "w",
         ) as f:
             json.dump(self.log_states_dict, f, indent=4)
+
+    def _save_newsletter(self, ticker: str, trade_date: str, decision: str, final_state: dict):
+        """Generate a newsletter summary and save it to the results directory."""
+        try:
+            newsletter = self.newsletter_generator.generate(
+                ticker, str(trade_date), decision, final_state
+            )
+            path = self.newsletter_generator.save(
+                newsletter,
+                self.config.get("results_dir", "./results"),
+                ticker,
+                str(trade_date),
+            )
+            if self.debug:
+                print(f"[Newsletter] Saved to {path}")
+        except Exception as e:
+            # Newsletter generation is non-critical — log and continue
+            if self.debug:
+                print(f"[Newsletter] Generation failed: {e}")
 
     def reflect_and_remember(self, returns_losses):
         """Reflect on decisions and update memory based on returns."""
