@@ -32,6 +32,12 @@ Key points to focus on:
 - Bear Counterpoints: Address the bear's concerns directly — explain why those risks are already priced in or why they won't materialize in the 30-60 day window.
 - Engagement: Present your argument conversationally, debating forward-looking scenarios rather than just describing what has already happened.
 
+Rebuttal Requirements (MANDATORY):
+- You MUST directly quote or paraphrase at least 2-3 specific claims from the bear's last argument below and refute each one individually with data.
+- Format each rebuttal as: "The bear claims [X]. This is wrong/overstated because [specific counter-evidence with numbers]."
+- Do not just make general bull arguments — every rebuttal must be tied to something the bear specifically said.
+- If this is the opening round and there is no bear argument yet, present your strongest 3 forward-looking bull arguments with specific price targets and catalyst timelines instead.
+
 Resources available:
 Market research report: {market_research_report}
 Social media sentiment report: {sentiment_report}

@@ -1074,6 +1074,7 @@ def run_analysis():
         # Get final state and decision
         final_state = trace[-1]
         decision = graph.process_signal(final_state["final_trade_decision"])
+        confidence = graph.signal_processor.process_confidence(final_state["final_trade_decision"])
 
         # Update all agent statuses to completed
         for agent in message_buffer.agent_status:
@@ -1092,8 +1093,8 @@ def run_analysis():
         try:
             ticker = selections["ticker"]
             trade_date = selections["analysis_date"]
-            free_nl = graph.newsletter_generator.generate_free(ticker, trade_date, decision, final_state)
-            premium_nl = graph.newsletter_generator.generate_premium(ticker, trade_date, decision, final_state)
+            free_nl = graph.newsletter_generator.generate_free(ticker, trade_date, decision, confidence, final_state)
+            premium_nl = graph.newsletter_generator.generate_premium(ticker, trade_date, decision, confidence, final_state)
             graph.newsletter_generator.save(
                 free_nl, premium_nl,
                 config.get("results_dir", "./results"),

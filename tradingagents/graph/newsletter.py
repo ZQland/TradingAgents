@@ -24,6 +24,7 @@ STRICT RULES:
 TICKER: {ticker}
 DATE: {trade_date}
 DECISION: {decision}
+CONFIDENCE: {confidence}/100
 
 MARKET & TECHNICAL REPORT:
 {market_report}
@@ -46,7 +47,7 @@ Output this exact structure:
 
 # {ticker} — {trade_date} | FREE EDITION
 
-## Decision: {decision}
+## Decision: {decision} | Confidence: {confidence}/100
 
 ## What's Happening
 [2 sentences: the core situation and what's driving the signal]
@@ -66,7 +67,7 @@ Output this exact structure:
 [1-2 sentences: why the system landed on {decision}]
 
 ---
-*TradingAgents Free Edition | {trade_date} — [Upgrade to Premium for full fundamentals, research manager rationale, and trader action plan]*
+*TradingAgents Free Edition | {trade_date} | Confidence: {confidence}/100 — [Upgrade to Premium for full fundamentals, research manager rationale, and trader action plan]*
 """
 
 
@@ -92,6 +93,7 @@ STRICT RULES:
 TICKER: {ticker}
 DATE: {trade_date}
 DECISION: {decision}
+CONFIDENCE: {confidence}/100
 
 MARKET & TECHNICAL REPORT:
 {market_report}
@@ -126,7 +128,7 @@ Output this exact structure:
 
 # {ticker} — {trade_date} | PREMIUM EDITION
 
-## Decision: {decision}
+## Decision: {decision} | Confidence: {confidence}/100
 
 ## Executive Summary
 [3-4 sentences: full situation, key drivers, and confidence level]
@@ -161,8 +163,8 @@ Output this exact structure:
 [3 bullets: the most important risks that could invalidate this trade]
 
 ## Confidence Assessment
-**Level:** [High / Medium / Low]
-[2 sentences justifying the level based on analyst consensus vs. disagreement]
+**Score: {confidence}/100**
+[2 sentences justifying the score based on analyst consensus vs. disagreement and the strength of the evidence]
 
 ---
 *TradingAgents Premium Edition | {trade_date}*
@@ -205,7 +207,7 @@ class NewsletterGenerator:
     def __init__(self, llm):
         self.llm = llm
 
-    def _build_context(self, ticker: str, trade_date: str, decision: str, final_state: dict) -> dict:
+    def _build_context(self, ticker: str, trade_date: str, decision: str, confidence: int, final_state: dict) -> dict:
         """Extract and prepare all fields needed by both tier prompts."""
         debate_state = final_state.get("investment_debate_state", {})
 
@@ -220,6 +222,7 @@ class NewsletterGenerator:
             ticker=ticker,
             trade_date=str(trade_date),
             decision=decision,
+            confidence=confidence,
             market_report=final_state.get("market_report", "Not available"),
             sentiment_report=final_state.get("sentiment_report", "Not available"),
             news_report=final_state.get("news_report", "Not available"),
@@ -231,15 +234,15 @@ class NewsletterGenerator:
             final_trade_decision=final_state.get("final_trade_decision", "Not available"),
         )
 
-    def generate_free(self, ticker: str, trade_date: str, decision: str, final_state: dict) -> str:
+    def generate_free(self, ticker: str, trade_date: str, decision: str, confidence: int, final_state: dict) -> str:
         """Generate the free-tier newsletter (300-600 words)."""
-        ctx = self._build_context(ticker, trade_date, decision, final_state)
+        ctx = self._build_context(ticker, trade_date, decision, confidence, final_state)
         prompt = FREE_TIER_PROMPT.format(**ctx)
         return self.llm.invoke(prompt).content
 
-    def generate_premium(self, ticker: str, trade_date: str, decision: str, final_state: dict) -> str:
+    def generate_premium(self, ticker: str, trade_date: str, decision: str, confidence: int, final_state: dict) -> str:
         """Generate the premium-tier newsletter (1200-1800 words)."""
-        ctx = self._build_context(ticker, trade_date, decision, final_state)
+        ctx = self._build_context(ticker, trade_date, decision, confidence, final_state)
         prompt = PREMIUM_TIER_PROMPT.format(**ctx)
         return self.llm.invoke(prompt).content
 

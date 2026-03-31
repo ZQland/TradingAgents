@@ -55,3 +55,15 @@ class SignalProcessor:
             'HOLD': len(re.findall(r'\bHOLD\b', upper)),
         }
         return max(counts, key=counts.get)
+
+    def process_confidence(self, full_signal: str) -> int:
+        """
+        Extract the confidence score from the risk manager's final decision text.
+        Looks for pattern: "Confidence Score: XX/100"
+        Returns an integer 0-100, defaults to 50 if not found.
+        """
+        m = re.search(r'Confidence Score:\s*(\d{1,3})/100', full_signal, re.IGNORECASE)
+        if m:
+            score = int(m.group(1))
+            return max(0, min(100, score))
+        return 50

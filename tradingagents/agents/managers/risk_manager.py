@@ -31,9 +31,19 @@ Deliverables:
 - A clear and actionable recommendation: Buy, Sell, or Hold.
 - Detailed reasoning anchored in the debate and past reflections.
 
+At the very end of your response, you MUST include a confidence line in exactly this format:
+**Confidence Score: [NUMBER]/100** — [one sentence explaining the score]
+
+The score reflects how strongly the evidence supports this decision:
+- 80-100: Strong consensus across all analysts, clear catalyst, low ambiguity
+- 60-79: Majority of evidence supports the decision but some conflicting signals
+- 40-59: Mixed signals, meaningful uncertainty, close call
+- 20-39: Weak conviction, significant opposing evidence, high uncertainty
+- 0-19: Highly speculative, evidence is thin or contradictory
+
 ---
 
-**Analysts Debate History:**  
+**Analysts Debate History:**
 {history}
 
 ---

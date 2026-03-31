@@ -186,13 +186,14 @@ class TradingAgentsGraph:
         # Log state
         self._log_state(trade_date, final_state)
 
-        # Extract decision
+        # Extract decision and confidence
         decision = self.process_signal(final_state["final_trade_decision"])
+        confidence = self.signal_processor.process_confidence(final_state["final_trade_decision"])
 
         # Generate and save newsletter summary
-        self._save_newsletter(company_name, trade_date, decision, final_state)
+        self._save_newsletter(company_name, trade_date, decision, confidence, final_state)
 
-        return final_state, decision
+        return final_state, decision, confidence
 
     def _log_state(self, trade_date, final_state):
         """Log the final state to a JSON file."""
@@ -236,14 +237,14 @@ class TradingAgentsGraph:
         ) as f:
             json.dump(self.log_states_dict, f, indent=4)
 
-    def _save_newsletter(self, ticker: str, trade_date: str, decision: str, final_state: dict):
+    def _save_newsletter(self, ticker: str, trade_date: str, decision: str, confidence: int, final_state: dict):
         """Generate free and premium newsletter summaries and save them to the results directory."""
         try:
             free = self.newsletter_generator.generate_free(
-                ticker, str(trade_date), decision, final_state
+                ticker, str(trade_date), decision, confidence, final_state
             )
             premium = self.newsletter_generator.generate_premium(
-                ticker, str(trade_date), decision, final_state
+                ticker, str(trade_date), decision, confidence, final_state
             )
             free_path, premium_path = self.newsletter_generator.save(
                 free,

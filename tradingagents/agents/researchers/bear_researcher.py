@@ -32,6 +32,12 @@ Key points to focus on:
 - Bull Counterpoints: Address the bull's catalysts directly — explain why those anticipated events are already priced in, likely to disappoint, or won't materialize in the 30-60 day window.
 - Engagement: Present your argument conversationally, debating forward-looking scenarios rather than just describing what has already happened.
 
+Rebuttal Requirements (MANDATORY):
+- You MUST directly quote or paraphrase at least 2-3 specific claims from the bull's last argument below and refute each one individually with data.
+- Format each rebuttal as: "The bull claims [X]. This is wrong/overstated because [specific counter-evidence with numbers]."
+- Do not just make general bear arguments — every rebuttal must be tied to something the bull specifically said.
+- If this is the opening round and there is no bull argument yet, present your strongest 3 forward-looking bear arguments with specific downside targets and risk catalyst timelines instead.
+
 Resources available:
 Market research report: {market_research_report}
 Social media sentiment report: {sentiment_report}
