@@ -6,15 +6,10 @@ import json
 def create_research_manager(llm, memory):
     def research_manager_node(state) -> dict:
         history = state["investment_debate_state"].get("history", "")
-        market_research_report = state["market_report"]
-        sentiment_report = state["sentiment_report"]
-        news_report = state["news_report"]
-        fundamentals_report = state["fundamentals_report"]
-
+        analyst_summary = state.get("analyst_summary", "")
         investment_debate_state = state["investment_debate_state"]
 
-        curr_situation = f"{market_research_report}\n\n{sentiment_report}\n\n{news_report}\n\n{fundamentals_report}"
-        past_memories = memory.get_memories(curr_situation, n_matches=2)
+        past_memories = memory.get_memories(analyst_summary, n_matches=2)
 
         past_memory_str = ""
         for i, rec in enumerate(past_memories, 1):
@@ -30,6 +25,9 @@ Your Recommendation: A decisive stance supported by the most convincing argument
 Rationale: An explanation of why these arguments lead to your conclusion.
 Strategic Actions: Concrete steps for implementing the recommendation.
 Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting. 
+
+Here is the analyst briefing (market, sentiment, news, fundamentals summary):
+{analyst_summary}
 
 Here are your past reflections on mistakes:
 \"{past_memory_str}\"

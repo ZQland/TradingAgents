@@ -68,6 +68,9 @@ class AgentState(MessagesState):
     ]
     fundamentals_report: Annotated[str, "Report from the Fundamentals Researcher"]
 
+    # compressed synthesis of all analyst reports — used by all downstream agents
+    analyst_summary: Annotated[str, "Compressed synthesis of all analyst reports for downstream agents"]
+
     # researcher team discussion step
     investment_debate_state: Annotated[
         InvestDebateState, "Current state of the debate on if to invest or not"

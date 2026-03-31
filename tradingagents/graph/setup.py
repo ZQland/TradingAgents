@@ -8,6 +8,7 @@ from langgraph.prebuilt import ToolNode
 from tradingagents.agents import *
 from tradingagents.agents.utils.agent_states import AgentState, AnalystState
 from tradingagents.agents.utils.agent_utils import Toolkit
+from tradingagents.agents.utils.report_synthesizer import create_report_synthesizer
 
 from .conditional_logic import ConditionalLogic
 
@@ -119,6 +120,9 @@ class GraphSetup:
             "fundamentals": lambda: create_fundamentals_analyst(self.quick_thinking_llm, self.toolkit),
         }
 
+        # Create report synthesizer node (compresses 4 analyst reports into one briefing)
+        report_synthesizer_node = create_report_synthesizer(self.quick_thinking_llm)
+
         # Create researcher and manager nodes
         bull_researcher_node = create_bull_researcher(
             self.quick_thinking_llm, self.bull_memory
@@ -151,6 +155,7 @@ class GraphSetup:
             workflow.add_node(f"{analyst_type.capitalize()} Analyst", wrapper)
 
         # Add other nodes
+        workflow.add_node("Report Synthesizer", report_synthesizer_node)
         workflow.add_node("Bull Researcher", bull_researcher_node)
         workflow.add_node("Bear Researcher", bear_researcher_node)
         workflow.add_node("Research Manager", research_manager_node)
@@ -164,9 +169,10 @@ class GraphSetup:
         for analyst_type in selected_analysts:
             workflow.add_edge(START, f"{analyst_type.capitalize()} Analyst")
 
-        # Fan-in: all analyst wrappers -> Bull Researcher
+        # Fan-in: all analyst wrappers -> Report Synthesizer -> Bull Researcher
         for analyst_type in selected_analysts:
-            workflow.add_edge(f"{analyst_type.capitalize()} Analyst", "Bull Researcher")
+            workflow.add_edge(f"{analyst_type.capitalize()} Analyst", "Report Synthesizer")
+        workflow.add_edge("Report Synthesizer", "Bull Researcher")
 
         # Research debate edges
         workflow.add_conditional_edges(
