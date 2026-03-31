@@ -237,19 +237,24 @@ class TradingAgentsGraph:
             json.dump(self.log_states_dict, f, indent=4)
 
     def _save_newsletter(self, ticker: str, trade_date: str, decision: str, final_state: dict):
-        """Generate a newsletter summary and save it to the results directory."""
+        """Generate free and premium newsletter summaries and save them to the results directory."""
         try:
-            newsletter = self.newsletter_generator.generate(
+            free = self.newsletter_generator.generate_free(
                 ticker, str(trade_date), decision, final_state
             )
-            path = self.newsletter_generator.save(
-                newsletter,
+            premium = self.newsletter_generator.generate_premium(
+                ticker, str(trade_date), decision, final_state
+            )
+            free_path, premium_path = self.newsletter_generator.save(
+                free,
+                premium,
                 self.config.get("results_dir", "./results"),
                 ticker,
                 str(trade_date),
             )
             if self.debug:
-                print(f"[Newsletter] Saved to {path}")
+                print(f"[Newsletter] Free saved to {free_path}")
+                print(f"[Newsletter] Premium saved to {premium_path}")
         except Exception as e:
             # Newsletter generation is non-critical — log and continue
             if self.debug:
