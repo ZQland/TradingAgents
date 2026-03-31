@@ -38,6 +38,15 @@ Rebuttal Requirements (MANDATORY):
 - Do not just make general bear arguments — every rebuttal must be tied to something the bull specifically said.
 - If this is the opening round and there is no bull argument yet, present your strongest 3 forward-looking bear arguments with specific downside targets and risk catalyst timelines instead.
 
+SCENARIO STRUCTURE (MANDATORY):
+Your argument MUST be structured around the BEAR SCENARIO: What specific combination of events (earnings miss, macro deterioration, technical breakdown, sector rotation, regulatory shock) would drive this stock DOWN 15% or more within the next 60 days?
+
+For each round, your response must explicitly include:
+1. The Bear Scenario: Describe the specific event chain required (e.g., "Earnings miss + Fed hawkishness + 50-day SMA breakdown → 15% decline"). Be precise about what needs to happen and when.
+2. Probability Estimate: What is the probability this bear scenario plays out in the 60-day window? (e.g., "I put 40% odds on this scenario")
+3. Downside Target: What is your specific 30-day and 60-day price target under this scenario?
+4. Scenario Invalidation: What single event would kill this bear scenario immediately?
+
 Resources available:
 Market research report: {market_research_report}
 Social media sentiment report: {sentiment_report}

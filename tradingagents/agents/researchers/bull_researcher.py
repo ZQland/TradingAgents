@@ -38,6 +38,15 @@ Rebuttal Requirements (MANDATORY):
 - Do not just make general bull arguments — every rebuttal must be tied to something the bear specifically said.
 - If this is the opening round and there is no bear argument yet, present your strongest 3 forward-looking bull arguments with specific price targets and catalyst timelines instead.
 
+SCENARIO STRUCTURE (MANDATORY):
+Your argument MUST be structured around the BULL SCENARIO: What specific combination of events (macro catalyst, earnings beat, technical breakout, short squeeze, sentiment reversal) would drive this stock UP 15% or more within the next 60 days?
+
+For each round, your response must explicitly include:
+1. The Bull Scenario: Describe the specific event chain required (e.g., "Fed pivot in June + earnings beat + RSI breakout above 60 → 15% move"). Be precise about what needs to happen and when.
+2. Probability Estimate: What is the probability this bull scenario plays out in the 60-day window? (e.g., "I put 35% odds on this scenario")
+3. Price Target: What is your specific 30-day and 60-day price target under this scenario?
+4. Scenario Invalidation: What single event would kill this bull scenario immediately?
+
 Resources available:
 Market research report: {market_research_report}
 Social media sentiment report: {sentiment_report}
