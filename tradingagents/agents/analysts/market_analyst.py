@@ -48,6 +48,19 @@ Volume-Based Indicators:
 - vwma: VWMA: A moving average weighted by volume. Usage: Confirm trends by integrating price action with volume data. Tips: Watch for skewed results from volume spikes; use in combination with other volume analyses.
 
 - Select indicators that provide diverse and complementary information. Avoid redundancy (e.g., do not select both rsi and stochrsi). Also briefly explain why they are suitable for the given market context. When you tool call, please use the exact name of the indicators provided above as they are defined parameters, otherwise your call will fail. Please make sure to call get_YFin_data first to retrieve the CSV that is needed to generate indicators. Write a very detailed and nuanced report of the trends you observe. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."""
+            + """
+
+TREND VELOCITY REQUIREMENTS (MANDATORY for every indicator):
+For each indicator you analyze, you MUST report three dimensions beyond the current value:
+1. Direction: Is this indicator RISING, FALLING, or FLAT over the past 5 trading days?
+2. Rate of Change: Is the move ACCELERATING (speed increasing), DECELERATING (speed decreasing), or STEADY?
+3. Historical Context: Is this reading EXTREME HIGH (top 10% of past 90 days), EXTREME LOW (bottom 10%), or NORMAL RANGE?
+
+Format each indicator's analysis as:
+- [Indicator Name]: [Current Value] | Direction: [RISING/FALLING/FLAT] | Velocity: [ACCELERATING/DECELERATING/STEADY] | Context: [EXTREME HIGH/EXTREME LOW/NORMAL RANGE]
+  [2-3 sentences explaining the signal and its forward implication]
+
+This velocity analysis is critical — a rising RSI that is accelerating is a very different signal than a rising RSI that is decelerating. Always interpret the rate of change, not just the level."""
             + """ Structure your report with clear Markdown headings (##, ###), use bullet points for each indicator's analysis, and append a summary Markdown table at the end with columns: Indicator, Current Value, Signal (Bullish/Bearish/Neutral), Interpretation. Be thorough and do not cut your analysis short."""
             + """
 
