@@ -59,9 +59,19 @@ class StockstatsUtils:
             )
 
             if os.path.exists(data_file):
-                data = pd.read_csv(data_file)
-                data["Date"] = pd.to_datetime(data["Date"])
-            else:
+                try:
+                    data = pd.read_csv(data_file, on_bad_lines="skip")
+                    data["Date"] = pd.to_datetime(data["Date"])
+                    # Sanity check: require the essential OHLCV columns
+                    required = {"Date", "Open", "High", "Low", "Close", "Volume"}
+                    if not required.issubset(set(data.columns)):
+                        raise ValueError("Missing required columns — cache corrupt")
+                except Exception:
+                    # Cache file is corrupt — delete and re-download fresh
+                    os.remove(data_file)
+                    data = None
+
+            if not os.path.exists(data_file) or data is None:
                 data = yf.download(
                     symbol,
                     start=start_date,
@@ -72,6 +82,7 @@ class StockstatsUtils:
                 )
                 data = data.reset_index()
                 data.to_csv(data_file, index=False)
+                data["Date"] = pd.to_datetime(data["Date"])
 
             df = wrap(data)
             df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
