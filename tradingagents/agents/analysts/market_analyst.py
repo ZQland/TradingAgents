@@ -49,6 +49,13 @@ Volume-Based Indicators:
 
 - Select indicators that provide diverse and complementary information. Avoid redundancy (e.g., do not select both rsi and stochrsi). Also briefly explain why they are suitable for the given market context. When you tool call, please use the exact name of the indicators provided above as they are defined parameters, otherwise your call will fail. Please make sure to call get_YFin_data first to retrieve the CSV that is needed to generate indicators. Write a very detailed and nuanced report of the trends you observe. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."""
             + """ Structure your report with clear Markdown headings (##, ###), use bullet points for each indicator's analysis, and append a summary Markdown table at the end with columns: Indicator, Current Value, Signal (Bullish/Bearish/Neutral), Interpretation. Be thorough and do not cut your analysis short."""
+            + """
+
+Your report MUST end with a ## Forward Outlook section containing:
+- **Trend trajectory**: where are the key indicators heading over the next 2-4 weeks — improving, deteriorating, or reversing? Cite the specific indicator movements driving this view.
+- **Key levels to watch**: the most important support and resistance price levels. What happens technically if each is broken?
+- **Pattern setup**: is the current chart structure a continuation, reversal, or consolidation? What does historical precedent say about this pattern?
+- **Directional bias**: state Bullish / Bearish / Neutral and a confidence level (High / Medium / Low) with one sentence of justification."""
         )
 
         prompt = ChatPromptTemplate.from_messages(

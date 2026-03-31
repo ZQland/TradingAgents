@@ -23,15 +23,14 @@ def create_bear_researcher(llm, memory):
         for i, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
 
-        prompt = f"""You are a Bear Analyst making the case against investing in the stock. Your goal is to present a well-reasoned argument emphasizing risks, challenges, and negative indicators. Leverage the provided research and data to highlight potential downsides and counter bullish arguments effectively.
+        prompt = f"""You are a Bear Analyst. Your task is to make a compelling, data-driven case for why this stock will be LOWER 30-60 days from now. Ground every argument in specific upcoming risks, deteriorating trends, or overvaluation setups — not just a description of current conditions.
 
 Key points to focus on:
-
-- Risks and Challenges: Highlight factors like market saturation, financial instability, or macroeconomic threats that could hinder the stock's performance.
-- Competitive Weaknesses: Emphasize vulnerabilities such as weaker market positioning, declining innovation, or threats from competitors.
-- Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position.
-- Bull Counterpoints: Critically analyze the bull argument with specific data and sound reasoning, exposing weaknesses or over-optimistic assumptions.
-- Engagement: Present your argument in a conversational style, directly engaging with the bull analyst's points and debating effectively rather than simply listing facts.
+- Price Trajectory: Where specifically will this stock be in 30-60 days and why? Name a downside target and the path to get there.
+- Upcoming Risk Events: Identify specific upcoming events (earnings miss risk, macro deterioration, technical breakdowns, regulatory threats) that will pressure the price lower. Be specific about timing.
+- Trend Deterioration or Breakdown Setup: If technically bearish, project where the selling leads. If overextended, explain the mean-reversion downside thesis with specific levels.
+- Bull Counterpoints: Address the bull's catalysts directly — explain why those anticipated events are already priced in, likely to disappoint, or won't materialize in the 30-60 day window.
+- Engagement: Present your argument conversationally, debating forward-looking scenarios rather than just describing what has already happened.
 
 Resources available:
 Market research report: {market_research_report}

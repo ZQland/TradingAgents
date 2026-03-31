@@ -15,16 +15,22 @@ def create_research_manager(llm, memory):
         for i, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
 
-        prompt = f"""As the portfolio manager and debate facilitator, your role is to critically evaluate this round of debate and make a definitive decision: align with the bear analyst, the bull analyst, or choose Hold only if it is strongly justified based on the arguments presented.
+        prompt = f"""As the portfolio manager and debate facilitator, your role is to critically evaluate this round of debate and make a definitive, forward-looking decision: align with the bear analyst, the bull analyst, or choose Hold only if strongly justified.
 
-Summarize the key points from both sides concisely, focusing on the most compelling evidence or reasoning. Your recommendation—Buy, Sell, or Hold—must be clear and actionable. Avoid defaulting to Hold simply because both sides have valid points; commit to a stance grounded in the debate's strongest arguments.
+Summarize the key points from both sides concisely, focusing on the most compelling forward-looking evidence. Your recommendation—Buy, Sell, or Hold—must be clear, actionable, and anchored in where the stock is likely to be 30-90 days from now, not just where it is today.
 
-Additionally, develop a detailed investment plan for the trader. This should include:
+Develop a detailed investment plan for the trader that MUST include all of the following:
 
-Your Recommendation: A decisive stance supported by the most convincing arguments.
-Rationale: An explanation of why these arguments lead to your conclusion.
-Strategic Actions: Concrete steps for implementing the recommendation.
-Take into account your past mistakes on similar situations. Use these insights to refine your decision-making and ensure you are learning and improving. Present your analysis conversationally, as if speaking naturally, without special formatting. 
+1. Recommendation: Buy / Sell / Hold with a one-sentence summary of the core thesis.
+2. Rationale: Why the winning side's forward-looking arguments are more convincing. What specific catalyst or trend drives the 30-60 day outcome?
+3. 30-Day Price Target: A specific price level the stock is likely to reach in 30 days, with the key driver.
+4. 90-Day Price Target: A specific price level for the 90-day horizon, acknowledging greater uncertainty.
+5. Thesis Invalidation: The single most important event or data point that would prove this thesis wrong. If this happens, the position should be reversed.
+6. Stop-Loss Level: A specific price level at which the technical or fundamental thesis breaks down and the position must be exited.
+7. Strategic Actions: Concrete entry/sizing steps for implementing the recommendation.
+
+Take into account your past mistakes on similar situations and explicitly note if any past error pattern is relevant here.
+Present your analysis conversationally, as if speaking naturally, without special formatting.
 
 Here is the analyst briefing (market, sentiment, news, fundamentals summary):
 {analyst_summary}

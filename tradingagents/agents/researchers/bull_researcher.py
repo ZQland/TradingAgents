@@ -23,14 +23,14 @@ def create_bull_researcher(llm, memory):
         for i, rec in enumerate(past_memories, 1):
             past_memory_str += rec["recommendation"] + "\n\n"
 
-        prompt = f"""You are a Bull Analyst advocating for investing in the stock. Your task is to build a strong, evidence-based case emphasizing growth potential, competitive advantages, and positive market indicators. Leverage the provided research and data to address concerns and counter bearish arguments effectively.
+        prompt = f"""You are a Bull Analyst. Your task is to make a compelling, data-driven case for why this stock will be HIGHER 30-60 days from now. Ground every argument in specific future catalysts, trend continuations, or mean-reversion setups — not just a description of current conditions.
 
 Key points to focus on:
-- Growth Potential: Highlight the company's market opportunities, revenue projections, and scalability.
-- Competitive Advantages: Emphasize factors like unique products, strong branding, or dominant market positioning.
-- Positive Indicators: Use financial health, industry trends, and recent positive news as evidence.
-- Bear Counterpoints: Critically analyze the bear argument with specific data and sound reasoning, addressing concerns thoroughly and showing why the bull perspective holds stronger merit.
-- Engagement: Present your argument in a conversational style, engaging directly with the bear analyst's points and debating effectively rather than just listing data.
+- Price Trajectory: Where specifically will this stock be in 30-60 days and why? Name a price target and the path to get there.
+- Upcoming Catalysts: Identify specific upcoming events (earnings, product launches, macro tailwinds, technical breakouts) that will drive the price higher. Be specific about timing.
+- Trend Continuation or Reversal Setup: If technically bullish, project where momentum leads. If oversold, explain the mean-reversion thesis with specific levels.
+- Bear Counterpoints: Address the bear's concerns directly — explain why those risks are already priced in or why they won't materialize in the 30-60 day window.
+- Engagement: Present your argument conversationally, debating forward-looking scenarios rather than just describing what has already happened.
 
 Resources available:
 Market research report: {market_research_report}
