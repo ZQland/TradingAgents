@@ -1088,6 +1088,20 @@ def run_analysis():
             if section in final_state:
                 message_buffer.update_report_section(section, final_state[section])
 
+        # Generate and save free + premium newsletters (files only, no terminal output)
+        try:
+            ticker = selections["ticker"]
+            trade_date = selections["analysis_date"]
+            free_nl = graph.newsletter_generator.generate_free(ticker, trade_date, decision, final_state)
+            premium_nl = graph.newsletter_generator.generate_premium(ticker, trade_date, decision, final_state)
+            graph.newsletter_generator.save(
+                free_nl, premium_nl,
+                config.get("results_dir", "./results"),
+                ticker, trade_date,
+            )
+        except Exception as e:
+            console.print(f"\n[yellow]Newsletter generation failed: {e}[/yellow]")
+
         # Display the complete final report
         display_complete_report(final_state)
 

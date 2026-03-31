@@ -252,16 +252,17 @@ class NewsletterGenerator:
         trade_date: str,
     ) -> tuple:
         """
-        Save both newsletter tiers alongside the raw reports.
+        Save both newsletter tiers into the reports/ subfolder alongside
+        all other raw report files.
 
         Output paths:
-          {results_dir}/{ticker}/{trade_date}/newsletter_free_{ticker}_{trade_date}.md
-          {results_dir}/{ticker}/{trade_date}/newsletter_premium_{ticker}_{trade_date}.md
+          {results_dir}/{ticker}/{trade_date}/reports/newsletter_free_{ticker}_{trade_date}.md
+          {results_dir}/{ticker}/{trade_date}/reports/newsletter_premium_{ticker}_{trade_date}.md
 
         Returns:
             Tuple of (free_path, premium_path)
         """
-        output_dir = Path(results_dir) / ticker / str(trade_date)
+        output_dir = Path(results_dir) / ticker / str(trade_date) / "reports"
         output_dir.mkdir(parents=True, exist_ok=True)
 
         free_path = output_dir / f"newsletter_free_{ticker}_{trade_date}.md"
