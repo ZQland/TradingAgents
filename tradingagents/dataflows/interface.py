@@ -6,7 +6,7 @@ from .googlenews_utils import *
 from .finnhub_utils import get_data_in_range
 from dateutil.relativedelta import relativedelta
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 import pandas as pd
@@ -748,6 +748,117 @@ def _web_search_query(prompt):
             store=True,
         )
         return response.output[1].content[0].text
+
+
+def get_catalyst_calendar(ticker, curr_date):
+    """Return a structured calendar of upcoming high-volatility events.
+
+    Combines three sources:
+    1. yfinance Ticker.calendar — earnings date, ex-dividend date (live API)
+    2. Computed options expiry — monthly (3rd Friday) and quad witching
+    3. Computed weekly options expiry — every Friday
+    """
+    from datetime import date as _date
+
+    curr = datetime.strptime(curr_date, "%Y-%m-%d").date()
+    sections = []
+
+    # ── 1. yfinance calendar (earnings, ex-dividend, etc.) ──────────────
+    try:
+        tk = yf.Ticker(ticker)
+        cal = tk.calendar
+        if cal is not None:
+            if isinstance(cal, pd.DataFrame):
+                cal_dict = cal.to_dict()
+                lines = []
+                for key, val in cal_dict.items():
+                    # val may be a dict with index 0
+                    if isinstance(val, dict):
+                        val = list(val.values())[0]
+                    lines.append(f"- **{key}**: {val}")
+                if lines:
+                    sections.append(
+                        f"## {ticker} — Company Calendar (via Yahoo Finance)\n"
+                        + "\n".join(lines)
+                    )
+            elif isinstance(cal, dict):
+                lines = []
+                for key, val in cal.items():
+                    if isinstance(val, list):
+                        val = ", ".join(str(v) for v in val)
+                    lines.append(f"- **{key}**: {val}")
+                if lines:
+                    sections.append(
+                        f"## {ticker} — Company Calendar (via Yahoo Finance)\n"
+                        + "\n".join(lines)
+                    )
+    except Exception:
+        pass  # yfinance calendar is best-effort
+
+    # ── 2. Options expiry dates (computed — 100% accurate) ──────────────
+    def third_friday(year, month):
+        """Return the 3rd Friday of the given month."""
+        first = _date(year, month, 1)
+        # weekday(): Monday=0 … Friday=4
+        day = 1 + (4 - first.weekday()) % 7 + 14  # first Friday + 14 days
+        return _date(year, month, day)
+
+    quad_witching_months = {3, 6, 9, 12}
+    expiry_lines = []
+
+    # Look ahead 90 days
+    look_ahead = curr + timedelta(days=90)
+    m, y = curr.month, curr.year
+    for _ in range(4):  # at most 4 months ahead
+        tf = third_friday(y, m)
+        if curr < tf <= look_ahead:
+            label = "QUAD WITCHING" if m in quad_witching_months else "Monthly options expiry"
+            expiry_lines.append(f"- **{tf.isoformat()}**: {label} (3rd Friday)")
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+
+    # Weekly Friday expiries within 30 days
+    d = curr + timedelta(days=(4 - curr.weekday()) % 7 or 7)  # next Friday
+    weekly_lines = []
+    while d <= curr + timedelta(days=30):
+        weekly_lines.append(f"- {d.isoformat()} (Friday)")
+        d += timedelta(days=7)
+
+    if expiry_lines or weekly_lines:
+        block = "## Options Expiry Calendar (computed)\n"
+        if expiry_lines:
+            block += "### Monthly / Quad Witching\n" + "\n".join(expiry_lines) + "\n"
+        if weekly_lines:
+            block += "### Weekly Expiry (next 30 days)\n" + "\n".join(weekly_lines) + "\n"
+        sections.append(block)
+
+    # ── 3. Guidance note for LLM web-search ─────────────────────────────
+    sections.append(
+        "## Macro Events — Search Required\n"
+        "The following high-volatility macro events are NOT included above because "
+        "their exact dates change each year. Use your web search tools to find the "
+        "next occurrence of each:\n"
+        "- **FOMC rate decision** (8 meetings/year — biggest single-day vol driver)\n"
+        "- **CPI / Core CPI release** (monthly, usually ~10th-14th)\n"
+        "- **Non-Farm Payrolls (NFP)** (first Friday of each month)\n"
+        "- **PPI (Producer Price Index)** (monthly)\n"
+        "- **GDP release** (advance, preliminary, final — quarterly)\n"
+        "- **PCE Price Index** (Fed's preferred inflation gauge — monthly)\n"
+        "- **OPEC+ meetings** (energy sector + broad market)\n"
+        "- **Treasury auctions** (10Y, 30Y — bond vol spills over)\n"
+        "- **Russell reconstitution** (late June — forced buying/selling)\n"
+        "- **S&P 500 rebalancing** (quarterly)\n"
+    )
+
+    if not sections:
+        return f"No catalyst calendar data available for {ticker}."
+
+    return (
+        f"# Catalyst Calendar for {ticker} (as of {curr_date})\n\n"
+        + "\n\n".join(sections)
+    )
 
 
 def get_stock_news_openai(ticker, curr_date):

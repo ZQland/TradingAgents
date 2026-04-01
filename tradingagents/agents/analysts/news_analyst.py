@@ -10,12 +10,13 @@ def create_news_analyst(llm, toolkit):
         ticker = state["company_of_interest"]
 
         if toolkit.config["online_tools"]:
-            tools = [toolkit.get_global_news_openai, toolkit.get_google_news]
+            tools = [toolkit.get_global_news_openai, toolkit.get_google_news, toolkit.get_catalyst_calendar]
         else:
             tools = [
                 toolkit.get_finnhub_news,
                 toolkit.get_reddit_news,
                 toolkit.get_google_news,
+                toolkit.get_catalyst_calendar,
             ]
 
         system_message = (
@@ -23,8 +24,10 @@ def create_news_analyst(llm, toolkit):
             + """ Structure your report with clear Markdown headings (##, ###), bullet points for key events, and append a summary Markdown table at the end with columns: Event/Topic, Impact (Positive/Negative/Neutral), Relevance to Trading. Be thorough and do not cut your analysis short."""
             + """
 
+IMPORTANT — Before writing your report, you MUST call the get_catalyst_calendar tool to retrieve the upcoming catalyst calendar for the ticker. This gives you earnings dates, options expiry dates, quad witching, and a checklist of macro events to search for. Then use your news/search tools to find the exact dates for the macro events listed (FOMC, CPI, NFP, PPI, GDP, PCE, etc.). Anchor your Forward Outlook around these concrete dates.
+
 Your report MUST end with a ## Forward Outlook section containing:
-- **Scheduled catalysts (next 30-60 days)**: list specific upcoming events with approximate dates — Fed/FOMC meetings, earnings releases, economic data prints (CPI, NFP, GDP), regulatory decisions, geopolitical flashpoints. State the expected market impact of each.
+- **Catalyst calendar (next 30-60 days)**: a date-ordered table of ALL upcoming events — earnings, ex-dividend, options expiry, quad witching, FOMC, CPI, NFP, PPI, GDP, PCE, and any sector-specific events (FDA decisions, product launches, OPEC, etc.). For each event state the date and expected market impact. This table must combine the computed dates from the catalyst calendar tool with macro dates you found via search.
 - **Macro trajectory**: are the dominant macro forces (rates, inflation, growth, geopolitics) strengthening, weakening, or shifting direction? What is the most likely macro regime for the next 30 days?
 - **Key risk event**: the single upcoming event most likely to cause a significant market move or reverse the current trend. Explain why.
 - **Directional macro bias**: state Bullish / Bearish / Neutral on the macro environment and a confidence level (High / Medium / Low) with one sentence of justification."""

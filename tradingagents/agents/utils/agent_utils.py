@@ -353,6 +353,24 @@ class Toolkit:
 
     @staticmethod
     @tool
+    def get_catalyst_calendar(
+        ticker: Annotated[str, "Ticker symbol of the company, e.g. AAPL, NVDA"],
+        curr_date: Annotated[str, "Current date in yyyy-mm-dd format"],
+    ) -> str:
+        """
+        Retrieve a structured calendar of upcoming high-volatility events for a stock.
+        Includes: earnings date, ex-dividend date, monthly/weekly options expiry,
+        quad witching dates, and a checklist of macro events to search for.
+        Args:
+            ticker (str): Ticker symbol of the company, e.g. AAPL, NVDA
+            curr_date (str): Current date in yyyy-mm-dd format
+        Returns:
+            str: A structured calendar of upcoming catalysts and high-volatility events
+        """
+        return interface.get_catalyst_calendar(ticker, curr_date)
+
+    @staticmethod
+    @tool
     def get_google_news(
         query: Annotated[str, "Query to search with"],
         curr_date: Annotated[str, "Curr date in yyyy-mm-dd format"],
