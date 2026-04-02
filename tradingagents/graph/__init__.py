@@ -7,6 +7,7 @@ from .propagation import Propagator
 from .reflection import Reflector
 from .signal_processing import SignalProcessor
 from .newsletter import NewsletterGenerator
+from .structured_output import StructuredDataExtractor
 
 __all__ = [
     "TradingAgentsGraph",
@@ -16,4 +17,5 @@ __all__ = [
     "Reflector",
     "SignalProcessor",
     "NewsletterGenerator",
+    "StructuredDataExtractor",
 ]

@@ -1092,6 +1092,8 @@ def run_analysis():
                 message_buffer.update_report_section(section, final_state[section])
 
         # Generate and save free + premium newsletters (files only, no terminal output)
+        free_nl = None
+        premium_nl = None
         try:
             ticker = selections["ticker"]
             trade_date = selections["analysis_date"]
@@ -1104,6 +1106,30 @@ def run_analysis():
             )
         except Exception as e:
             console.print(f"\n[yellow]Newsletter generation failed: {e}[/yellow]")
+
+        # Generate and save structured JSON output
+        try:
+            from tradingagents.graph.structured_output import (
+                build_structured_json, save_structured_json,
+            )
+            ticker = selections["ticker"]
+            trade_date = selections["analysis_date"]
+            extracted = graph.structured_extractor.extract(
+                final_state.get("investment_plan", ""),
+                final_state.get("trader_investment_plan", ""),
+            )
+            structured_json = build_structured_json(
+                ticker, trade_date, decision, confidence,
+                final_state, extracted, free_nl, premium_nl,
+            )
+            json_path = save_structured_json(
+                structured_json,
+                config.get("results_dir", "./results"),
+                ticker, trade_date,
+            )
+            message_buffer.add_message("System", f"Structured JSON saved to {json_path}")
+        except Exception as e:
+            console.print(f"\n[yellow]Structured JSON generation failed: {e}[/yellow]")
 
         # Display the complete final report
         display_complete_report(final_state)

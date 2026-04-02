@@ -28,6 +28,7 @@ from .propagation import Propagator
 from .reflection import Reflector
 from .signal_processing import SignalProcessor
 from .newsletter import NewsletterGenerator
+from .structured_output import StructuredDataExtractor, build_structured_json, save_structured_json
 
 
 class TradingAgentsGraph:
@@ -102,9 +103,11 @@ class TradingAgentsGraph:
         self.reflector = Reflector(self.quick_thinking_llm)
         self.signal_processor = SignalProcessor()
         self.newsletter_generator = NewsletterGenerator(self.quick_thinking_llm)
+        self.structured_extractor = StructuredDataExtractor(self.quick_thinking_llm)
 
         # State tracking
         self.curr_state = None
+        self.structured_output = None  # populated after propagate()
         self.ticker = None
         self.log_states_dict = {}  # date to full state dict
 
@@ -238,7 +241,11 @@ class TradingAgentsGraph:
             json.dump(self.log_states_dict, f, indent=4)
 
     def _save_newsletter(self, ticker: str, trade_date: str, decision: str, confidence: int, final_state: dict):
-        """Generate free and premium newsletter summaries and save them to the results directory."""
+        """Generate newsletters and structured JSON, then save to results directory."""
+        free = None
+        premium = None
+
+        # Generate newsletters
         try:
             free = self.newsletter_generator.generate_free(
                 ticker, str(trade_date), decision, confidence, final_state
@@ -257,9 +264,30 @@ class TradingAgentsGraph:
                 print(f"[Newsletter] Free saved to {free_path}")
                 print(f"[Newsletter] Premium saved to {premium_path}")
         except Exception as e:
-            # Newsletter generation is non-critical — log and continue
             if self.debug:
                 print(f"[Newsletter] Generation failed: {e}")
+
+        # Generate structured JSON output
+        try:
+            extracted = self.structured_extractor.extract(
+                final_state.get("investment_plan", ""),
+                final_state.get("trader_investment_plan", ""),
+            )
+            self.structured_output = build_structured_json(
+                ticker, str(trade_date), decision, confidence,
+                final_state, extracted, free, premium,
+            )
+            json_path = save_structured_json(
+                self.structured_output,
+                self.config.get("results_dir", "./results"),
+                ticker,
+                str(trade_date),
+            )
+            if self.debug:
+                print(f"[Structured] JSON saved to {json_path}")
+        except Exception as e:
+            if self.debug:
+                print(f"[Structured] JSON generation failed: {e}")
 
     def reflect_and_remember(self, returns_losses):
         """Reflect on decisions and update memory based on returns."""
