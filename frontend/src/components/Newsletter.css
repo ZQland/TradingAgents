@@ -1,0 +1,744 @@
+/* ================================================================
+   Newsletter.css — GitHub-inspired dark theme for financial reports
+   Matches Dashboard palette: #0d1117, #161b22, #21262d, #30363d
+   ================================================================ */
+
+/* ===== Wrapper & Layout ===== */
+.nl-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background: #0d1117;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  color: #c9d1d9;
+}
+
+.nl-container {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  gap: 0;
+}
+
+.nl-container--with-toc {
+  max-width: 1200px;
+}
+
+.nl-main {
+  flex: 1;
+  min-width: 0;
+  max-width: 900px;
+  position: relative;
+}
+
+/* ===== Tabs ===== */
+.nl-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0;
+  padding: 4px;
+  background: #161b22;
+  border-radius: 10px;
+  border: 1px solid #30363d;
+}
+
+.nl-tab {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #8b949e;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.nl-tab:hover {
+  color: #c9d1d9;
+  background: #21262d;
+}
+
+/* Free tab active */
+.nl-tab--free.nl-tab--active {
+  background: #21262d;
+  color: #e6edf3;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Premium tab active — gold shimmer */
+.nl-tab--premium.nl-tab--active {
+  background: linear-gradient(135deg, #2a2215 0%, #342a10 50%, #2a2215 100%);
+  color: #f0c040;
+  box-shadow: 0 1px 6px rgba(240, 192, 64, 0.15);
+  text-shadow: 0 0 12px rgba(240, 192, 64, 0.2);
+  border: 1px solid rgba(240, 192, 64, 0.2);
+  animation: nl-gold-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes nl-gold-shimmer {
+  0%, 100% { box-shadow: 0 1px 6px rgba(240, 192, 64, 0.1); }
+  50% { box-shadow: 0 1px 12px rgba(240, 192, 64, 0.25); }
+}
+
+/* Premium tab hover when inactive */
+.nl-tab--premium:not(.nl-tab--active):hover {
+  color: #c8a83a;
+}
+
+/* ===== Newsletter Header ===== */
+.nl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-top: none;
+  padding: 16px 24px;
+}
+
+.nl-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nl-header-ticker {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.nl-header-date {
+  font-size: 0.85rem;
+  color: #8b949e;
+}
+
+.nl-header-edition {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #21262d;
+  color: #8b949e;
+  border: 1px solid #30363d;
+}
+
+.nl-header-edition--premium {
+  background: rgba(240, 192, 64, 0.1);
+  color: #f0c040;
+  border-color: rgba(240, 192, 64, 0.25);
+}
+
+.nl-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Decision badge */
+.nl-decision-badge {
+  display: inline-block;
+  padding: 5px 18px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.nl-badge-buy { background: #23863640; color: #3fb950; border: 1px solid #23863680; }
+.nl-badge-sell { background: #da363440; color: #f85149; border: 1px solid #da363480; }
+.nl-badge-hold { background: #9e6a0340; color: #d29922; border: 1px solid #9e6a0380; }
+
+/* Confidence gauge */
+.nl-confidence {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nl-confidence-label {
+  font-size: 0.7rem;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nl-confidence-track {
+  width: 100px;
+  height: 8px;
+  background: #21262d;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.nl-confidence-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.nl-confidence-value {
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ===== Action Buttons ===== */
+.nl-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+  padding: 4px;
+}
+
+.nl-action-btn {
+  padding: 6px 12px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #8b949e;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.nl-action-btn:hover {
+  background: #30363d;
+  color: #e6edf3;
+  border-color: #484f58;
+}
+
+/* ===== Scroll Progress Indicator ===== */
+.nl-scroll-progress-track {
+  width: 100%;
+  height: 3px;
+  background: #21262d;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.nl-scroll-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #1f6feb, #58a6ff);
+  transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ===== Newsletter Body ===== */
+.nl-body {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 2.5rem 3rem 3rem;
+  color: #c9d1d9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  max-height: 80vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+.nl-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nl-body::-webkit-scrollbar-track {
+  background: #161b22;
+}
+
+.nl-body::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 3px;
+}
+
+.nl-body::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* ===== Empty State ===== */
+.nl-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #484f58;
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+/* ===== Headings ===== */
+.nl-body h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid #1f6feb;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.nl-body h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #e6edf3;
+  margin: 2.25rem 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dotted #30363d;
+  line-height: 1.35;
+  scroll-margin-top: 24px;
+}
+
+.nl-body h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #c9d1d9;
+  margin: 1.75rem 0 0.6rem 0;
+  line-height: 1.4;
+}
+
+.nl-body h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #8b949e;
+  margin: 1.5rem 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Paragraphs ===== */
+.nl-body p {
+  margin: 0.9rem 0;
+}
+
+/* ===== Bold / Strong — white to make key numbers pop ===== */
+.nl-body strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ===== Italic / Emphasis ===== */
+.nl-body em {
+  color: #8b949e;
+  font-style: italic;
+}
+
+/* ===== Links ===== */
+.nl-body a {
+  color: #58a6ff;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.nl-body a:hover {
+  border-bottom-color: #58a6ff;
+}
+
+/* ===== Unordered Lists ===== */
+.nl-body ul {
+  margin: 1rem 0;
+  padding-left: 1.75rem;
+  list-style: none;
+}
+
+.nl-body ul li {
+  position: relative;
+  padding-left: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.nl-body ul li::before {
+  content: '\2022';
+  position: absolute;
+  left: -0.9rem;
+  color: #484f58;
+  font-size: 1.2em;
+  line-height: 1.7;
+}
+
+/* ===== Ordered Lists ===== */
+.nl-body ol {
+  margin: 1rem 0;
+  padding-left: 1.75rem;
+}
+
+.nl-body ol li {
+  padding-left: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.nl-body ol li::marker {
+  color: #484f58;
+  font-weight: 600;
+}
+
+/* ===== Nested lists ===== */
+.nl-body ul ul,
+.nl-body ol ul,
+.nl-body ul ol,
+.nl-body ol ol {
+  margin: 0.4rem 0;
+}
+
+/* ===== Horizontal Rule — gradient line ===== */
+.nl-body hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #30363d 15%,
+    #484f58 50%,
+    #30363d 85%,
+    transparent 100%
+  );
+  margin: 2.5rem 0;
+}
+
+/* ===== Blockquotes ===== */
+.nl-body blockquote {
+  border-left: 3px solid #1f6feb;
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  background: rgba(31, 111, 235, 0.05);
+  border-radius: 0 8px 8px 0;
+  color: #8b949e;
+}
+
+.nl-body blockquote p {
+  margin: 0.4rem 0;
+}
+
+/* ===== Inline Code ===== */
+.nl-body code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.88em;
+  background: #21262d;
+  color: #79c0ff;
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+}
+
+/* ===== Code Blocks ===== */
+.nl-body pre {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.nl-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.9em;
+  color: #c9d1d9;
+}
+
+/* ===== Tables ===== */
+.nl-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.nl-body thead th {
+  background: #21262d;
+  color: #e6edf3;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #30363d;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nl-body tbody td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #21262d;
+  color: #c9d1d9;
+}
+
+.nl-body tbody tr:nth-child(even) {
+  background: #161b22;
+}
+
+.nl-body tbody tr:nth-child(odd) {
+  background: #0d1117;
+}
+
+.nl-body tbody tr:hover {
+  background: #1c2128;
+}
+
+/* ===== Images ===== */
+.nl-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+  border: 1px solid #30363d;
+}
+
+/* ===== Table of Contents — Desktop Sidebar ===== */
+.nl-toc-sidebar {
+  display: none;
+  width: 240px;
+  flex-shrink: 0;
+  margin-left: 24px;
+  position: sticky;
+  top: 2rem;
+  align-self: flex-start;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  padding: 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  border-left: 3px solid rgba(240, 192, 64, 0.3);
+}
+
+.nl-toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nl-toc-list li {
+  margin-bottom: 2px;
+}
+
+.nl-toc-list button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  color: #8b949e;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+}
+
+.nl-toc-list button:hover {
+  background: #21262d;
+  color: #e6edf3;
+}
+
+.nl-toc-list .nl-toc-active button {
+  color: #f0c040;
+  background: rgba(240, 192, 64, 0.08);
+}
+
+/* ===== Table of Contents — Mobile Dropdown ===== */
+.nl-toc-mobile {
+  display: block;
+  margin-bottom: 0;
+}
+
+.nl-toc-mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-top: none;
+  color: #8b949e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.2s;
+}
+
+.nl-toc-mobile-toggle:hover {
+  color: #e6edf3;
+}
+
+.nl-toc-chevron {
+  transition: transform 0.2s ease;
+  font-size: 0.7rem;
+}
+
+.nl-toc-chevron--open {
+  transform: rotate(180deg);
+}
+
+.nl-toc-mobile-panel {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-top: none;
+  padding: 8px 12px 12px;
+}
+
+.nl-toc-mobile-panel .nl-toc-list button {
+  font-size: 0.82rem;
+  padding: 6px 10px;
+}
+
+/* ===== Print styles ===== */
+@media print {
+  .nl-wrapper {
+    background: #fff;
+    padding: 0;
+  }
+
+  .nl-tabs,
+  .nl-actions,
+  .nl-scroll-progress-track,
+  .nl-toc-sidebar,
+  .nl-toc-mobile {
+    display: none !important;
+  }
+
+  .nl-header {
+    background: #f8f8f8;
+    border-color: #ddd;
+    color: #222;
+  }
+
+  .nl-header-ticker { color: #000; }
+  .nl-header-date { color: #666; }
+
+  .nl-body {
+    background: #fff;
+    color: #222;
+    border-color: #ddd;
+    max-height: none;
+    overflow: visible;
+    padding: 1.5rem;
+  }
+
+  .nl-body h1 { color: #000; border-bottom-color: #1f6feb; }
+  .nl-body h2 { color: #222; border-bottom-color: #ccc; }
+  .nl-body h3 { color: #333; }
+  .nl-body strong { color: #000; }
+  .nl-body table { border-color: #ccc; }
+  .nl-body thead th { background: #f0f0f0; color: #222; border-color: #ccc; }
+  .nl-body tbody td { color: #333; border-color: #ddd; }
+  .nl-body tbody tr:nth-child(even) { background: #fafafa; }
+  .nl-body tbody tr:nth-child(odd) { background: #fff; }
+  .nl-body blockquote { background: #f5f5f5; color: #555; border-left-color: #1f6feb; }
+  .nl-body hr { background: #ccc; }
+}
+
+/* ===== Responsive ===== */
+
+/* Show sidebar ToC only on wide screens */
+@media (min-width: 1200px) {
+  .nl-toc-sidebar {
+    display: block;
+  }
+
+  /* Hide mobile dropdown when sidebar is visible */
+  .nl-toc-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .nl-body {
+    padding: 1.75rem 1.5rem 2rem;
+  }
+
+  .nl-body h1 {
+    font-size: 1.5rem;
+  }
+
+  .nl-body h2 {
+    font-size: 1.2rem;
+  }
+
+  .nl-header {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .nl-header-ticker {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .nl-wrapper {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .nl-body {
+    padding: 1.25rem 1rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .nl-tab {
+    font-size: 0.82rem;
+    padding: 8px 10px;
+  }
+
+  .nl-body h1 {
+    font-size: 1.3rem;
+  }
+
+  .nl-body h2 {
+    font-size: 1.1rem;
+  }
+
+  .nl-body table {
+    font-size: 0.82rem;
+  }
+
+  .nl-body thead th,
+  .nl-body tbody td {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .nl-header-left,
+  .nl-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .nl-actions {
+    position: static;
+    justify-content: flex-end;
+    padding: 4px 0;
+  }
+}
