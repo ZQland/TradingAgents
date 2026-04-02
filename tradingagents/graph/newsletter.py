@@ -124,7 +124,7 @@ FINAL RISK MANAGER DECISION:
 
 ---
 
-Output this exact structure:
+Output this exact structure (use numbered sub-sections within each major section for clarity):
 
 # {ticker} — {trade_date} | PREMIUM EDITION
 
@@ -134,7 +134,7 @@ Output this exact structure:
 [3-4 sentences: full situation, key drivers, and confidence level]
 
 ## Market & Technical Analysis
-[4-5 bullets with specific indicator values, trend context, volume, and what they imply]
+[4-5 bullets with specific indicator values, trend context, volume, and what they imply — include velocity/direction data where available]
 
 ## Sentiment & News Environment
 [3-4 bullets: social sentiment tone, specific news events, macro backdrop and its relevance]
@@ -154,10 +154,64 @@ Output this exact structure:
 [2-3 sentences on which side made the more compelling case and why]
 
 ## Research Manager's Verdict
-[Full rationale for the investment recommendation — include any lessons from past mistakes the manager explicitly noted, and how those influenced this decision]
+Use numbered sub-sections — extract every item from the research manager's plan:
+
+### 1. Recommendation
+[Buy / Sell / Hold with one-sentence core thesis]
+
+### 2. Rationale
+[Why this side won the debate — forward-looking, catalyst-driven reasoning]
+
+### 3. Price Targets
+- **30-Day Target**: $X — [key driver]
+- **60-Day Target**: $X — [key driver]
+- **90-Day Target**: $X — [key driver]
+
+### 4. Probability Assessment
+- **Bull Scenario** (15%+ upside in 60 days): X%
+- **Base Case**: X%
+- **Bear Scenario** (15%+ downside in 60 days): X%
+- *(Must sum to 100%)*
+
+### 5. Thesis Invalidation
+[The single event that would reverse this position]
+
+### 6. Stop-Loss Level
+[$X — why this level]
+
+### 7. Scenario Analysis
+- **Bull Scenario**: [event chain, probability, price target]
+- **Bear Scenario**: [event chain, probability, price target]
+- **Base Case**: [most likely path, expected price range at 30/60/90 days]
 
 ## Trader's Action Plan
-[Concrete steps from the trader: entry approach, position sizing logic, stop-loss level, price targets, time horizon — quote specific levels if mentioned]
+Use numbered sub-sections for each component:
+
+### 1. Decision
+[BUY / SELL / HOLD — one sentence]
+
+### 2. Position Sizing & Entry Strategy
+[How to enter: all-at-once vs scaled, position size relative to portfolio]
+
+### 3. Price Targets
+- **30-Day**: $X
+- **60-Day**: $X
+- **90-Day**: $X
+
+### 4. Scenario Probabilities
+- **Bull Case** (15%+ upside): X% — $X target
+- **Base Case**: X% — $X-$X range
+- **Bear Case** (15%+ downside): X% — $X target
+- *(Must sum to 100%)*
+
+### 5. Stop-Loss
+[$X — conditions for exit]
+
+### 6. Risk Management
+[How to manage if position moves against you]
+
+### 7. Reversal Conditions
+[Under what conditions the position should be fully reversed]
 
 ## Risk Factors
 [3 bullets: the most important risks that could invalidate this trade]

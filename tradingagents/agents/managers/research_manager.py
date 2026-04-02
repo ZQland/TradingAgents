@@ -24,15 +24,16 @@ Develop a detailed investment plan for the trader that MUST include all of the f
 1. Recommendation: Buy / Sell / Hold with a one-sentence summary of the core thesis.
 2. Rationale: Why the winning side's forward-looking arguments are more convincing. What specific catalyst or trend drives the 30-60 day outcome?
 3. 30-Day Price Target: A specific price level the stock is likely to reach in 30 days, with the key driver.
-4. 90-Day Price Target: A specific price level for the 90-day horizon, acknowledging greater uncertainty.
-5. Probability Assessment: Assign a percentage probability to the base case scenario. Then state the Bull Scenario probability (15%+ upside in 60 days), Bear Scenario probability (15%+ downside in 60 days), and Base Case probability. These three must sum to 100%.
-6. Thesis Invalidation: The single most important event or data point that would prove this thesis wrong. If this happens, the position should be reversed.
-7. Stop-Loss Level: A specific price level at which the technical or fundamental thesis breaks down and the position must be exited.
-8. Strategic Actions: Concrete entry/sizing steps for implementing the recommendation.
-9. Scenario Analysis (MANDATORY):
+4. 60-Day Price Target: A specific price level for the 60-day horizon.
+5. 90-Day Price Target: A specific price level for the 90-day horizon, acknowledging greater uncertainty.
+6. Probability Assessment: Assign percentage probabilities to Bull Scenario (15%+ upside in 60 days), Bear Scenario (15%+ downside in 60 days), and Base Case. These three MUST sum to exactly 100%.
+7. Thesis Invalidation: The single most important event or data point that would prove this thesis wrong. If this happens, the position should be reversed.
+8. Stop-Loss Level: A specific price level at which the technical or fundamental thesis breaks down and the position must be exited.
+9. Strategic Actions: Concrete entry/sizing steps for implementing the recommendation.
+10. Scenario Analysis (MANDATORY):
    - Bull Scenario (15%+ upside within 60 days): Name the specific combination of events — macro catalyst, earnings beat, technical breakout, sentiment shift — that would need to occur. Assign a probability.
    - Bear Scenario (15%+ downside within 60 days): Name the specific combination of events that would drive this move lower. Assign a probability.
-   - Base Case: The most likely path. What is the expected price range at 30 and 60 days if neither extreme scenario plays out?
+   - Base Case: The most likely path. What is the expected price range at 30, 60, and 90 days if neither extreme scenario plays out?
 
 Take into account your past mistakes on similar situations and explicitly note if any past error pattern is relevant here.
 Present your analysis conversationally, as if speaking naturally, without special formatting.
