@@ -437,8 +437,10 @@ def get_user_selections():
     default_date = datetime.datetime.now().strftime("%Y-%m-%d")
     console.print(
         create_question_box(
-            "Step 2: Analysis Date",
-            "Enter the analysis date (YYYY-MM-DD)",
+            "Step 2: Trading Date",
+            "The date you want to simulate trading on. All data and analysis will be\n"
+            "  anchored to this date — agents will only see information available as of\n"
+            "  this date and will not use future data. (YYYY-MM-DD)",
             default_date,
         )
     )
@@ -809,7 +811,7 @@ def run_analysis():
         # Add initial messages
         message_buffer.add_message("System", f"Selected ticker: {selections['ticker']}")
         message_buffer.add_message(
-            "System", f"Analysis date: {selections['analysis_date']}"
+            "System", f"Trading date: {selections['analysis_date']}"
         )
         message_buffer.add_message(
             "System",

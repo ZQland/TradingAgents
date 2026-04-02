@@ -864,34 +864,57 @@ def get_catalyst_calendar(ticker, curr_date):
 def get_stock_news_openai(ticker, curr_date):
     config = get_config()
     provider = config.get("llm_provider", "openai").lower()
+    cutoff_instruction = (
+        f" CRITICAL: Your analysis cutoff date is {curr_date}. You MUST NOT include any "
+        f"information, events, price movements, or news that occurred AFTER {curr_date}. "
+        f"If you encounter articles referencing events after {curr_date}, ignore them completely. "
+        f"Pretend today is {curr_date}."
+    )
     if provider == "google":
         return _web_search_query(
             f"Search the web for recent news, social media discussions, and public sentiment about {ticker} stock from 7 days before {curr_date} to {curr_date}. Include Reddit posts, Twitter/X discussions, news articles, and analyst opinions. Summarize the key findings."
+            + cutoff_instruction
         )
     return _web_search_query(
         f"Can you search Social Media for {ticker} from 7 days before {curr_date} to {curr_date}? Make sure you only get the data posted during that period."
+        + cutoff_instruction
     )
 
 
 def get_global_news_openai(curr_date):
     config = get_config()
     provider = config.get("llm_provider", "openai").lower()
+    cutoff_instruction = (
+        f" CRITICAL: Your analysis cutoff date is {curr_date}. You MUST NOT include any "
+        f"information, events, price movements, or news that occurred AFTER {curr_date}. "
+        f"If you encounter articles referencing events after {curr_date}, ignore them completely. "
+        f"Pretend today is {curr_date}."
+    )
     if provider == "google":
         return _web_search_query(
             f"Search the web for global macroeconomic news and market-moving events from 7 days before {curr_date} to {curr_date} that would be relevant for stock trading. Include economic data releases, central bank decisions, geopolitical events, and market trends."
+            + cutoff_instruction
         )
     return _web_search_query(
         f"Can you search global or macroeconomics news from 7 days before {curr_date} to {curr_date} that would be informative for trading purposes? Make sure you only get the data posted during that period."
+        + cutoff_instruction
     )
 
 
 def get_fundamentals_openai(ticker, curr_date):
     config = get_config()
     provider = config.get("llm_provider", "openai").lower()
+    cutoff_instruction = (
+        f" CRITICAL: Your analysis cutoff date is {curr_date}. You MUST NOT include any "
+        f"information, events, earnings results, or price data that were not publicly known "
+        f"by {curr_date}. Pretend today is {curr_date} — do not use hindsight."
+    )
     if provider == "google":
         return _web_search_query(
             f"Search the web for fundamental analysis data on {ticker} stock as of {curr_date}. Find and list key metrics in a table format including: P/E ratio, P/S ratio, cash flow, revenue growth, earnings, debt-to-equity, and any other relevant fundamental indicators."
+            + cutoff_instruction
         )
     return _web_search_query(
         f"Can you search Fundamental for discussions on {ticker} during of the month before {curr_date} to the month of {curr_date}. Make sure you only get the data posted during that period. List as a table, with PE/PS/Cash flow/ etc"
+        + cutoff_instruction
     )
