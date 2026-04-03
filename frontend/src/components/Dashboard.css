@@ -1072,6 +1072,206 @@
   border-radius: 3px;
 }
 
+/* ── Debate Card ───────────────────────────────────── */
+
+.debate-columns {
+  display: flex;
+  gap: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #21262d;
+}
+
+.debate-side {
+  flex: 1;
+  padding: 20px 24px;
+  background: #0d1117;
+}
+
+.debate-bull {
+  border-right: none;
+}
+
+.debate-bear {
+  border-left: none;
+}
+
+.debate-divider {
+  width: 1px;
+  background: linear-gradient(180deg, transparent, #30363d 20%, #30363d 80%, transparent);
+  flex-shrink: 0;
+}
+
+.debate-side-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.debate-side-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.debate-bull-icon {
+  background: rgba(63, 185, 80, 0.15);
+  color: #3fb950;
+  border: 1px solid rgba(63, 185, 80, 0.3);
+}
+
+.debate-bear-icon {
+  background: rgba(248, 81, 73, 0.15);
+  color: #f85149;
+  border: 1px solid rgba(248, 81, 73, 0.3);
+}
+
+.debate-side-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8b949e;
+}
+
+.debate-side-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #c9d1d9;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.debate-side-text p {
+  margin: 0.5rem 0;
+}
+
+.debate-side-text::-webkit-scrollbar {
+  width: 4px;
+}
+
+.debate-side-text::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 2px;
+}
+
+.debate-expand-btn {
+  display: block;
+  margin: 12px auto 0;
+  padding: 6px 20px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #8b949e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.debate-expand-btn:hover {
+  background: #30363d;
+  color: #e6edf3;
+}
+
+/* ── Analyst Report Markdown Rendering ─────────────── */
+
+.analyst-report-markdown {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #c9d1d9;
+  margin: 16px 0 0;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.analyst-report-markdown::-webkit-scrollbar {
+  width: 4px;
+}
+
+.analyst-report-markdown::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 2px;
+}
+
+.analyst-report-markdown h1,
+.analyst-report-markdown h2,
+.analyst-report-markdown h3 {
+  color: #e6edf3;
+  margin: 1rem 0 0.5rem;
+}
+
+.analyst-report-markdown h1 { font-size: 16px; }
+.analyst-report-markdown h2 { font-size: 14px; }
+.analyst-report-markdown h3 { font-size: 13px; }
+
+.analyst-report-markdown p {
+  margin: 0.5rem 0;
+}
+
+.analyst-report-markdown strong {
+  color: #ffffff;
+}
+
+.analyst-report-markdown ul,
+.analyst-report-markdown ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.analyst-report-markdown li {
+  margin-bottom: 0.3rem;
+}
+
+.analyst-report-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 12px;
+}
+
+.analyst-report-markdown thead th {
+  background: #161b22;
+  color: #e6edf3;
+  font-weight: 600;
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid #30363d;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.analyst-report-markdown tbody td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #21262d;
+  color: #c9d1d9;
+}
+
+.analyst-report-markdown tbody tr:nth-child(even) {
+  background: rgba(13, 17, 23, 0.5);
+}
+
+.analyst-report-markdown code {
+  font-size: 0.88em;
+  background: #21262d;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+.analyst-report-markdown hr {
+  border: none;
+  height: 1px;
+  background: #21262d;
+  margin: 1rem 0;
+}
+
 /* ── Micro-interactions (global) ───────────────────── */
 
 /* Buttons: subtle scale on press */
@@ -1133,6 +1333,16 @@ button:active,
 
   .pipeline-node-label {
     font-size: 9px;
+  }
+
+  .debate-columns {
+    flex-direction: column;
+  }
+
+  .debate-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #30363d 20%, #30363d 80%, transparent);
   }
 
   .analyst-card-left {

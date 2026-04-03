@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import type { StructuredOutput, Metadata, ResearchManager, Trader, Analysts, PriceTargets, Probabilities } from '../types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import type { StructuredOutput, Metadata, ResearchManager, Trader, Analysts, DebateData, PriceTargets, Probabilities } from '../types';
 import TrendVisualization from './TrendVisualization';
 import './Dashboard.css';
 
@@ -355,6 +357,66 @@ function RiskCard({ researchManager, trader }: RiskCardProps) {
   );
 }
 
+interface DebateCardProps {
+  debate?: DebateData;
+}
+
+function DebateCard({ debate }: DebateCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const bullOpening = debate?.bull_opening || '';
+  const bearOpening = debate?.bear_opening || '';
+  const hasDebate = bullOpening.length > 20 || bearOpening.length > 20;
+
+  if (!hasDebate) return null;
+
+  return (
+    <div className="card dashboard-grid-full">
+      <h2 className="card-title">Bull vs Bear Debate</h2>
+      <div className="debate-columns">
+        <div className="debate-side debate-bull">
+          <div className="debate-side-header">
+            <span className="debate-side-icon debate-bull-icon">{'\u2191'}</span>
+            <span className="debate-side-label">Bull Case</span>
+          </div>
+          <div className="debate-side-text">
+            {expanded ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {debate?.full_bull_history || bullOpening}
+              </ReactMarkdown>
+            ) : (
+              <p>{firstSentences(bullOpening, 2) || bullOpening}</p>
+            )}
+          </div>
+        </div>
+        <div className="debate-divider" />
+        <div className="debate-side debate-bear">
+          <div className="debate-side-header">
+            <span className="debate-side-icon debate-bear-icon">{'\u2193'}</span>
+            <span className="debate-side-label">Bear Case</span>
+          </div>
+          <div className="debate-side-text">
+            {expanded ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {debate?.full_bear_history || bearOpening}
+              </ReactMarkdown>
+            ) : (
+              <p>{firstSentences(bearOpening, 2) || bearOpening}</p>
+            )}
+          </div>
+        </div>
+      </div>
+      {(debate?.full_bull_history || debate?.full_bear_history) && (
+        <button
+          className="debate-expand-btn"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? 'Show Summary' : 'Show Full Debate'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 interface AnalystCardProps {
   name: string;
   reportMarkdown?: string;
@@ -378,7 +440,11 @@ function AnalystCard({ name, reportMarkdown }: AnalystCardProps) {
       </div>
       {expanded && (
         <div className="analyst-card-body">
-          <pre className="analyst-report-text">{reportMarkdown || 'No report available.'}</pre>
+          <div className="analyst-report-markdown">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {reportMarkdown || 'No report available.'}
+            </ReactMarkdown>
+          </div>
         </div>
       )}
     </div>
@@ -427,7 +493,7 @@ export default function Dashboard({ data }: DashboardProps) {
     );
   }
 
-  const { metadata, research_manager, trader, analysts } = data;
+  const { metadata, research_manager, trader, analysts, debate } = data;
 
   return (
     <div className="dashboard">
@@ -443,6 +509,7 @@ export default function Dashboard({ data }: DashboardProps) {
         <PriceTargetsCard researchManager={research_manager} trader={trader} />
         <ScenarioProbabilitiesCard researchManager={research_manager} trader={trader} />
         <RiskCard researchManager={research_manager} trader={trader} />
+        <DebateCard debate={debate} />
         <AnalystReportsSection analysts={analysts} />
       </div>
     </div>
