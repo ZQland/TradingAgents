@@ -38,9 +38,21 @@ function App() {
       });
   }, []);
 
+  // Keyboard shortcuts: 1 = Dashboard, 2 = Newsletter
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === '1') setView('dashboard');
+      if (e.key === '2') setView('newsletter');
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   if (loading) {
     return (
       <div className="app-loading">
+        <div className="app-loading-brand">TradingAgents</div>
         <div className="app-loading-spinner" />
         <p>Loading analysis data...</p>
       </div>
@@ -50,6 +62,7 @@ function App() {
   if (!data) {
     return (
       <div className="app-loading">
+        <div className="app-loading-brand">TradingAgents</div>
         <p>Failed to load data. Place structured_output.json in public/data/</p>
       </div>
     );
@@ -67,13 +80,13 @@ function App() {
             className={`app-nav-tab${view === 'dashboard' ? ' app-nav-tab--active' : ''}`}
             onClick={() => setView('dashboard')}
           >
-            Dashboard
+            Dashboard <span className="app-nav-shortcut">1</span>
           </button>
           <button
             className={`app-nav-tab${view === 'newsletter' ? ' app-nav-tab--active' : ''}`}
             onClick={() => setView('newsletter')}
           >
-            Newsletter
+            Newsletter <span className="app-nav-shortcut">2</span>
           </button>
         </div>
 
