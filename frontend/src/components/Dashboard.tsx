@@ -185,6 +185,100 @@ function PriceTargetBox({ label, value, direction }: PriceTargetBoxProps) {
   );
 }
 
+interface PriceTrajectoryProps {
+  targets: PriceTargets | null | undefined;
+  stopLoss?: number | null;
+  direction: Direction;
+  label: string;
+}
+
+function PriceTrajectory({ targets, stopLoss, direction, label }: PriceTrajectoryProps) {
+  if (!targets) return null;
+  const values = [targets.day_30, targets.day_60, targets.day_90].filter(
+    (v): v is number => v != null
+  );
+  if (values.length < 2) return null;
+
+  const allValues = [...values];
+  if (stopLoss != null) allValues.push(stopLoss);
+
+  const minVal = Math.min(...allValues) * 0.98;
+  const maxVal = Math.max(...allValues) * 1.02;
+  const range = maxVal - minVal || 1;
+
+  const w = 280;
+  const h = 80;
+  const pad = 20;
+
+  const points = values.map((v, i) => ({
+    x: pad + (i / (values.length - 1)) * (w - pad * 2),
+    y: pad + (1 - (v - minVal) / range) * (h - pad * 2),
+  }));
+
+  const lineColor = direction === 'up' ? '#3fb950' : direction === 'down' ? '#f85149' : '#d29922';
+  const gradId = `grad-${label.replace(/\s/g, '')}`;
+
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const areaD = `${pathD} L ${points[points.length - 1].x} ${h - 5} L ${points[0].x} ${h - 5} Z`;
+
+  return (
+    <div className="price-trajectory">
+      <svg viewBox={`0 0 ${w} ${h}`} className="price-trajectory-svg">
+        <defs>
+          <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor={lineColor} stopOpacity="0.2" />
+            <stop offset="100%" stopColor={lineColor} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {/* Stop loss dashed line */}
+        {stopLoss != null && (
+          <>
+            <line
+              x1={pad}
+              x2={w - pad}
+              y1={pad + (1 - (stopLoss - minVal) / range) * (h - pad * 2)}
+              y2={pad + (1 - (stopLoss - minVal) / range) * (h - pad * 2)}
+              stroke="#f85149"
+              strokeWidth="1"
+              strokeDasharray="4 3"
+              opacity="0.5"
+            />
+            <text
+              x={w - pad + 2}
+              y={pad + (1 - (stopLoss - minVal) / range) * (h - pad * 2) + 3}
+              fill="#f85149"
+              fontSize="8"
+              opacity="0.7"
+            >
+              SL
+            </text>
+          </>
+        )}
+
+        {/* Area fill */}
+        <path d={areaD} fill={`url(#${gradId})`} />
+
+        {/* Line */}
+        <path d={pathD} fill="none" stroke={lineColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* Data points */}
+        {points.map((p, i) => (
+          <g key={i}>
+            <circle cx={p.x} cy={p.y} r="4" fill="#0d1117" stroke={lineColor} strokeWidth="2" />
+            <text x={p.x} y={p.y - 8} fill="#8b949e" fontSize="9" textAnchor="middle">
+              ${values[i]}
+            </text>
+            <text x={p.x} y={h - 1} fill="#484f58" fontSize="8" textAnchor="middle">
+              {['30d', '60d', '90d'][i]}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 interface PriceTargetsCardProps {
   researchManager?: ResearchManager;
   trader?: Trader;
@@ -206,6 +300,7 @@ function PriceTargetsCard({ researchManager, trader }: PriceTargetsCardProps) {
 
   const rmDir = getDirection(rmTargets);
   const trDir = getDirection(trTargets);
+  const stopLoss = researchManager?.stop_loss ?? trader?.stop_loss;
 
   return (
     <div className="card">
@@ -217,6 +312,7 @@ function PriceTargetsCard({ researchManager, trader }: PriceTargetsCardProps) {
         <PriceTargetBox label="60-Day" value={rmTargets?.day_60} direction={rmDir} />
         <PriceTargetBox label="90-Day" value={rmTargets?.day_90} direction={rmDir} />
       </div>
+      <PriceTrajectory targets={rmTargets} stopLoss={stopLoss} direction={rmDir} label="RM" />
 
       <div className="targets-source-label" style={{ marginTop: 20 }}>Trader</div>
       <div className="targets-row">
@@ -224,6 +320,7 @@ function PriceTargetsCard({ researchManager, trader }: PriceTargetsCardProps) {
         <PriceTargetBox label="60-Day" value={trTargets?.day_60} direction={trDir} />
         <PriceTargetBox label="90-Day" value={trTargets?.day_90} direction={trDir} />
       </div>
+      <PriceTrajectory targets={trTargets} stopLoss={stopLoss} direction={trDir} label="TR" />
     </div>
   );
 }

@@ -667,6 +667,22 @@
   top: 1px;
 }
 
+/* ── Price Trajectory Chart ─────────────────────────── */
+
+.price-trajectory {
+  margin-top: 12px;
+  border-radius: 8px;
+  background: #0d1117;
+  border: 1px solid #21262d;
+  padding: 8px 4px 4px;
+}
+
+.price-trajectory-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* ── Scenario Probabilities ─────────────────────────── */
 
 .prob-section {
