@@ -235,6 +235,102 @@ function RSIGauge({ rsi }: { rsi: IndicatorData | null }) {
   );
 }
 
+function MACDGauge({ macd, macdSignal }: { macd: IndicatorData | null; macdSignal: IndicatorData | null }) {
+  if (!macd || macd.value === null) {
+    return (
+      <div className="tv-gauge-card">
+        <div className="tv-gauge-title">MACD</div>
+        <div className="tv-na-text">N/A</div>
+      </div>
+    );
+  }
+
+  const macdValue = macd.value;
+  const signalValue = macdSignal?.value ?? null;
+  const histogram = signalValue != null ? macdValue - signalValue : null;
+  const isBullish = macdValue > 0;
+  const crossover = signalValue != null
+    ? macdValue > signalValue ? 'Bullish Crossover' : 'Bearish Crossover'
+    : null;
+  const crossColor = crossover === 'Bullish Crossover' ? '#3fb950' : '#f85149';
+  const macdColor = isBullish ? '#3fb950' : '#f85149';
+
+  const velArrow = macd.direction === 'RISING'
+    ? (macd.velocity === 'ACCELERATING' ? '\u2191\u2191' : '\u2191')
+    : (macd.velocity === 'ACCELERATING' ? '\u2193\u2193' : '\u2193');
+
+  // Visualize histogram as bars
+  const histBars = histogram != null ? (() => {
+    const absHist = Math.abs(histogram);
+    const maxBar = 5;
+    const barCount = Math.min(Math.ceil(absHist / 0.5), 8);
+    const bars = [];
+    for (let i = 0; i < Math.max(barCount, 3); i++) {
+      const height = Math.min(((i + 1) / maxBar) * 100, 100);
+      const isActive = i < barCount;
+      bars.push(
+        <div
+          key={i}
+          className="tv-macd-hist-bar"
+          style={{
+            height: `${isActive ? Math.max(height, 20) : 15}%`,
+            background: isActive
+              ? histogram > 0 ? 'rgba(63, 185, 80, 0.7)' : 'rgba(248, 81, 73, 0.7)'
+              : '#21262d',
+          }}
+        />
+      );
+    }
+    return bars;
+  })() : null;
+
+  return (
+    <div className="tv-gauge-card">
+      <div className="tv-gauge-title">MACD</div>
+
+      <div className="tv-macd-values">
+        <div className="tv-macd-value-row">
+          <span className="tv-macd-label">MACD</span>
+          <span className="tv-macd-num" style={{ color: macdColor }}>
+            {macdValue.toFixed(2)} {velArrow}
+          </span>
+        </div>
+        {signalValue != null && (
+          <div className="tv-macd-value-row">
+            <span className="tv-macd-label">Signal</span>
+            <span className="tv-macd-num">{signalValue.toFixed(2)}</span>
+          </div>
+        )}
+        {histogram != null && (
+          <div className="tv-macd-value-row">
+            <span className="tv-macd-label">Histogram</span>
+            <span className="tv-macd-num" style={{ color: histogram > 0 ? '#3fb950' : '#f85149' }}>
+              {histogram > 0 ? '+' : ''}{histogram.toFixed(2)}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {histBars && (
+        <div className="tv-macd-hist-container">
+          <div className="tv-macd-hist-zero" />
+          <div className="tv-macd-hist-bars">
+            {histBars}
+          </div>
+        </div>
+      )}
+
+      {crossover && (
+        <div className="tv-macd-crossover" style={{ color: crossColor, borderColor: crossColor }}>
+          {crossover}
+        </div>
+      )}
+
+      <div className="tv-velocity-text">{velocityLabel(macd)}</div>
+    </div>
+  );
+}
+
 function MovingAverageStatus({ technicals }: { technicals: ParsedTechnicals }) {
   const { sma50, sma200, currentPrice } = technicals;
 
@@ -577,6 +673,7 @@ export default function TrendVisualization({ data }: TrendVisualizationProps) {
       <div className="tv-gauges-grid">
         <MomentumGauge technicals={technicals} />
         <RSIGauge rsi={technicals.rsi} />
+        <MACDGauge macd={technicals.macd} macdSignal={technicals.macdSignal} />
         <MovingAverageStatus technicals={technicals} />
         <TrendStrengthMeter technicals={technicals} />
         <VolumeIndicator technicals={technicals} />

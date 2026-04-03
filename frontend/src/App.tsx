@@ -4,6 +4,22 @@ import Dashboard from './components/Dashboard';
 import Newsletter from './components/Newsletter';
 import './App.css';
 
+function formatTimestamp(iso: string | undefined): string {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return iso;
+  }
+}
+
 function App() {
   const [data, setData] = useState<StructuredOutput | null>(null);
   const [view, setView] = useState<'dashboard' | 'newsletter'>('dashboard');
@@ -39,10 +55,13 @@ function App() {
     );
   }
 
+  const generatedAt = formatTimestamp(data.generated_at);
+
   return (
     <div className="app">
       <nav className="app-nav">
         <div className="app-nav-brand">TradingAgents</div>
+
         <div className="app-nav-tabs">
           <button
             className={`app-nav-tab${view === 'dashboard' ? ' app-nav-tab--active' : ''}`}
@@ -57,6 +76,13 @@ function App() {
             Newsletter
           </button>
         </div>
+
+        {generatedAt && (
+          <div className="app-nav-meta">
+            <span className="app-nav-freshness-dot" />
+            <span className="app-nav-freshness">{generatedAt}</span>
+          </div>
+        )}
       </nav>
 
       {view === 'dashboard' ? (
@@ -64,6 +90,13 @@ function App() {
       ) : (
         <Newsletter data={data} />
       )}
+
+      <footer className="app-footer">
+        <span className="app-footer-text">
+          Powered by TradingAgents Multi-Agent Analysis System
+        </span>
+        <span className="app-footer-version">v{data.version}</span>
+      </footer>
     </div>
   );
 }

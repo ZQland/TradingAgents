@@ -259,6 +259,77 @@
   text-align: center;
 }
 
+/* ── MACD Gauge ───────────────────────────────────── */
+
+.tv-macd-values {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tv-macd-value-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tv-macd-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tv-macd-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e6edf3;
+}
+
+.tv-macd-hist-container {
+  position: relative;
+  height: 48px;
+  margin: 4px 0;
+}
+
+.tv-macd-hist-zero {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #30363d;
+}
+
+.tv-macd-hist-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+  padding: 0 4px;
+}
+
+.tv-macd-hist-bar {
+  width: 8px;
+  border-radius: 2px 2px 0 0;
+  transition: height 0.4s ease, background 0.3s ease;
+  min-height: 4px;
+}
+
+.tv-macd-crossover {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-align: center;
+  padding: 4px 12px;
+  border: 1px solid;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
 /* ── Moving Average Status ─────────────────────────── */
 
 .tv-ma-cross-badge {
