@@ -1,7 +1,10 @@
 /* ================================================================
-   Newsletter.css — GitHub-inspired dark theme for financial reports
-   Matches Dashboard palette: #0d1117, #161b22, #21262d, #30363d
+   Newsletter.css — Premium financial report theme
+   Dark palette: #0d1117, #161b22, #21262d, #30363d
    ================================================================ */
+
+/* ===== Google Fonts Import ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 /* ===== Wrapper & Layout ===== */
 .nl-wrapper {
@@ -10,8 +13,9 @@
   padding: 2rem 1rem;
   min-height: 100vh;
   background: #0d1117;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
   color: #c9d1d9;
 }
 
@@ -71,19 +75,19 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Premium tab active — gold shimmer */
+/* Premium tab active — refined gold shimmer */
 .nl-tab--premium.nl-tab--active {
   background: linear-gradient(135deg, #2a2215 0%, #342a10 50%, #2a2215 100%);
   color: #f0c040;
-  box-shadow: 0 1px 6px rgba(240, 192, 64, 0.15);
-  text-shadow: 0 0 12px rgba(240, 192, 64, 0.2);
+  box-shadow: 0 1px 6px rgba(240, 192, 64, 0.12);
+  text-shadow: 0 0 8px rgba(240, 192, 64, 0.15);
   border: 1px solid rgba(240, 192, 64, 0.2);
-  animation: nl-gold-shimmer 3s ease-in-out infinite;
+  animation: nl-gold-shimmer 5s ease-in-out infinite;
 }
 
 @keyframes nl-gold-shimmer {
-  0%, 100% { box-shadow: 0 1px 6px rgba(240, 192, 64, 0.1); }
-  50% { box-shadow: 0 1px 12px rgba(240, 192, 64, 0.25); }
+  0%, 100% { box-shadow: 0 1px 6px rgba(240, 192, 64, 0.08); }
+  50% { box-shadow: 0 1px 10px rgba(240, 192, 64, 0.18); }
 }
 
 /* Premium tab hover when inactive */
@@ -113,7 +117,7 @@
 
 .nl-header-ticker {
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff;
   letter-spacing: 0.5px;
 }
@@ -254,31 +258,56 @@
   border-radius: 0 0 12px 12px;
   padding: 2.5rem 3rem 3rem;
   color: #c9d1d9;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
   font-size: 1rem;
-  line-height: 1.8;
+  line-height: 1.9;
   max-height: 80vh;
   overflow-y: auto;
   scroll-behavior: smooth;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15),
+              inset 0 0 20px rgba(0, 0, 0, 0.06);
+  position: relative;
 }
 
-/* Scrollbar styling */
+/* Decorative header flourish — top gradient line */
+.nl-body::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #58a6ff 20%,
+    #1f6feb 50%,
+    #58a6ff 80%,
+    transparent 100%
+  );
+  border-radius: 0 0 2px 2px;
+  pointer-events: none;
+}
+
+/* Scrollbar styling — thinner & more subtle */
 .nl-body::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .nl-body::-webkit-scrollbar-track {
-  background: #161b22;
+  background: transparent;
 }
 
 .nl-body::-webkit-scrollbar-thumb {
-  background: #30363d;
-  border-radius: 3px;
+  background: linear-gradient(180deg, #30363d, #484f58);
+  border-radius: 2px;
 }
 
 .nl-body::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
+  background: linear-gradient(180deg, #484f58, #6e7681);
 }
 
 /* ===== Empty State ===== */
@@ -292,42 +321,122 @@
 
 /* ===== Headings ===== */
 .nl-body h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 800;
   color: #ffffff;
   margin: 0 0 0.5rem 0;
-  padding-bottom: 0.75rem;
-  border-bottom: 3px solid #1f6feb;
-  letter-spacing: -0.01em;
+  padding-bottom: 0.85rem;
+  border-bottom: none;
+  letter-spacing: -0.02em;
   line-height: 1.3;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Gradient underline for h1 */
+.nl-body h1::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    #1f6feb 0%,
+    #58a6ff 40%,
+    #bc8cff 70%,
+    #58a6ff 100%
+  );
 }
 
 .nl-body h2 {
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #e6edf3;
-  margin: 2.25rem 0 0.75rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px dotted #30363d;
+  margin: 3rem 0 0.75rem 0;
+  padding: 0 0 0.5rem 16px;
+  border-bottom: none;
+  border-left: 4px solid #58a6ff;
   line-height: 1.35;
   scroll-margin-top: 24px;
+  position: relative;
+}
+
+/* Decorative gradient line before h2 sections */
+.nl-body h2::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -1.5rem;
+  left: -1px;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #30363d 10%,
+    #484f58 50%,
+    #30363d 90%,
+    transparent 100%
+  );
+}
+
+/* First h2 shouldn't have a separator line above it */
+.nl-body h1 + h2::before,
+.nl-body > h2:first-child::before {
+  display: none;
+}
+
+/* Accent color cycling for h2 left border */
+.nl-body h2:nth-of-type(4n+1) {
+  border-left-color: #58a6ff; /* blue */
+}
+
+.nl-body h2:nth-of-type(4n+2) {
+  border-left-color: #f0c040; /* gold */
+}
+
+.nl-body h2:nth-of-type(4n+3) {
+  border-left-color: #3fb950; /* green */
+}
+
+.nl-body h2:nth-of-type(4n+4) {
+  border-left-color: #bc8cff; /* purple */
 }
 
 .nl-body h3 {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #c9d1d9;
   margin: 1.75rem 0 0.6rem 0;
   line-height: 1.4;
+  padding-left: 14px;
+  position: relative;
+}
+
+/* Dot indicator before h3 */
+.nl-body h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #484f58;
 }
 
 .nl-body h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #8b949e;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #6e7681;
   margin: 1.5rem 0 0.5rem 0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1.2px;
 }
 
 /* ===== Paragraphs ===== */
@@ -335,10 +444,19 @@
   margin: 0.9rem 0;
 }
 
-/* ===== Bold / Strong — white to make key numbers pop ===== */
+/* ===== Bold / Strong — brighter white for key data points ===== */
 .nl-body strong {
   color: #ffffff;
   font-weight: 700;
+}
+
+/* Highlight effect for strong tags inside list items */
+.nl-body li strong {
+  background: rgba(88, 166, 255, 0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 /* ===== Italic / Emphasis ===== */
@@ -359,7 +477,7 @@
   border-bottom-color: #58a6ff;
 }
 
-/* ===== Unordered Lists ===== */
+/* ===== Unordered Lists — custom colored bullets ===== */
 .nl-body ul {
   margin: 1rem 0;
   padding-left: 1.75rem;
@@ -373,12 +491,27 @@
 }
 
 .nl-body ul li::before {
-  content: '\2022';
+  content: '';
   position: absolute;
   left: -0.9rem;
-  color: #484f58;
-  font-size: 1.2em;
-  line-height: 1.7;
+  top: 0.7em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #58a6ff;
+}
+
+/* Cycle bullet colors in lists */
+.nl-body ul li:nth-child(4n+1)::before { background: #58a6ff; }
+.nl-body ul li:nth-child(4n+2)::before { background: #f0c040; }
+.nl-body ul li:nth-child(4n+3)::before { background: #3fb950; }
+.nl-body ul li:nth-child(4n+4)::before { background: #bc8cff; }
+
+/* Nested list bullets stay muted to avoid visual noise */
+.nl-body ul ul li::before {
+  background: #484f58 !important;
+  width: 4px;
+  height: 4px;
 }
 
 /* ===== Ordered Lists ===== */
@@ -393,8 +526,8 @@
 }
 
 .nl-body ol li::marker {
-  color: #484f58;
-  font-weight: 600;
+  color: #58a6ff;
+  font-weight: 700;
 }
 
 /* ===== Nested lists ===== */
@@ -420,14 +553,33 @@
   margin: 2.5rem 0;
 }
 
-/* ===== Blockquotes ===== */
+/* ===== Blockquotes — callout box style ===== */
 .nl-body blockquote {
-  border-left: 3px solid #1f6feb;
+  border-left: 3px solid #58a6ff;
   margin: 1.5rem 0;
-  padding: 0.75rem 1.25rem;
-  background: rgba(31, 111, 235, 0.05);
+  padding: 1rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(31, 111, 235, 0.06) 0%,
+    rgba(88, 166, 255, 0.03) 50%,
+    rgba(31, 111, 235, 0.06) 100%
+  );
   border-radius: 0 8px 8px 0;
   color: #8b949e;
+  position: relative;
+}
+
+.nl-body blockquote::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 0 8px 8px 0;
+  border: 1px solid rgba(88, 166, 255, 0.08);
+  border-left: none;
+  pointer-events: none;
 }
 
 .nl-body blockquote p {
@@ -463,7 +615,7 @@
   color: #c9d1d9;
 }
 
-/* ===== Tables ===== */
+/* ===== Tables — frosted glass header ===== */
 .nl-body table {
   width: 100%;
   border-collapse: collapse;
@@ -475,14 +627,16 @@
 }
 
 .nl-body thead th {
-  background: #21262d;
+  background: rgba(33, 38, 45, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #e6edf3;
-  font-weight: 600;
+  font-weight: 700;
   text-align: left;
   padding: 0.75rem 1rem;
-  border-bottom: 2px solid #30363d;
+  border-bottom: 2px solid rgba(88, 166, 255, 0.15);
   font-size: 0.82rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -646,19 +800,52 @@
     max-height: none;
     overflow: visible;
     padding: 1.5rem;
+    box-shadow: none;
   }
 
-  .nl-body h1 { color: #000; border-bottom-color: #1f6feb; }
-  .nl-body h2 { color: #222; border-bottom-color: #ccc; }
+  .nl-body::before { display: none; }
+
+  .nl-body h1 {
+    color: #000;
+    text-shadow: none;
+  }
+
+  .nl-body h1::after {
+    background: #1f6feb;
+  }
+
+  .nl-body h2 {
+    color: #222;
+    border-left-color: #ccc;
+  }
+
+  .nl-body h2::before { display: none; }
   .nl-body h3 { color: #333; }
+  .nl-body h3::before { background: #999; }
   .nl-body strong { color: #000; }
+  .nl-body li strong { background: transparent; }
   .nl-body table { border-color: #ccc; }
-  .nl-body thead th { background: #f0f0f0; color: #222; border-color: #ccc; }
+  .nl-body thead th {
+    background: #f0f0f0;
+    color: #222;
+    border-color: #ccc;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
   .nl-body tbody td { color: #333; border-color: #ddd; }
   .nl-body tbody tr:nth-child(even) { background: #fafafa; }
   .nl-body tbody tr:nth-child(odd) { background: #fff; }
-  .nl-body blockquote { background: #f5f5f5; color: #555; border-left-color: #1f6feb; }
+  .nl-body blockquote {
+    background: #f5f5f5;
+    color: #555;
+    border-left-color: #1f6feb;
+  }
+  .nl-body blockquote::before { display: none; }
   .nl-body hr { background: #ccc; }
+
+  .nl-body ul li::before {
+    background: #333 !important;
+  }
 }
 
 /* ===== Responsive ===== */
@@ -719,6 +906,7 @@
 
   .nl-body h2 {
     font-size: 1.1rem;
+    margin-top: 2rem;
   }
 
   .nl-body table {

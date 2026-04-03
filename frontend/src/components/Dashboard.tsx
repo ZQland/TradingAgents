@@ -1,37 +1,37 @@
 import React, { useState } from 'react';
+import type { StructuredOutput, Metadata, ResearchManager, Trader, Analysts, PriceTargets, Probabilities } from '../types';
+import TrendVisualization from './TrendVisualization';
 import './Dashboard.css';
 
 /* ────────────────────────────────────────────────────── */
 /*  Utilities                                              */
 /* ────────────────────────────────────────────────────── */
 
-function safe(value, fallback = 'N/A') {
+function safe(value: unknown, fallback = 'N/A'): string {
   if (value === null || value === undefined || value === '') return fallback;
-  return value;
+  return String(value);
 }
 
-function fmtPrice(value) {
+function fmtPrice(value: number | null | undefined): string {
   if (value === null || value === undefined) return '\u2014';
   return `$${Number(value).toLocaleString()}`;
 }
 
-function badgeClass(decision) {
+function badgeClass(decision: string): string {
   const d = (decision || '').toUpperCase();
   if (d === 'BUY') return 'badge-buy';
   if (d === 'SELL') return 'badge-sell';
   return 'badge-hold';
 }
 
-function confidenceColor(value) {
+function confidenceColor(value: number): string {
   if (value >= 70) return '#3fb950';
   if (value >= 40) return '#d29922';
   return '#f85149';
 }
 
-/** Extract the first N sentences from a text string. */
-function firstSentences(text, n = 2) {
+function firstSentences(text: string | undefined | null, n = 2): string {
   if (!text) return '';
-  // Split on sentence-ending punctuation followed by whitespace
   const sentences = text.match(/[^.!?]*[.!?]+/g);
   if (!sentences) return text.slice(0, 200);
   return sentences.slice(0, n).join(' ').trim();
@@ -41,9 +41,12 @@ function firstSentences(text, n = 2) {
 /*  Sub-components                                         */
 /* ────────────────────────────────────────────────────── */
 
-function ConfidenceGauge({ value }) {
+interface ConfidenceGaugeProps {
+  value: number | null;
+}
+
+function ConfidenceGauge({ value }: ConfidenceGaugeProps) {
   const clampedValue = value != null ? Math.max(0, Math.min(100, value)) : 0;
-  // Semi-circle: 180 degrees total. Rotate from -90deg (left) to +90deg (right)
   const rotation = (clampedValue / 100) * 180 - 90;
   const color = value != null ? confidenceColor(value) : '#484f58';
 
@@ -52,7 +55,6 @@ function ConfidenceGauge({ value }) {
       <div className="gauge-label">CONFIDENCE</div>
       <div className="gauge-arc-wrapper">
         <div className="gauge-arc-bg" />
-        {/* Colored fill — clip a rotating element */}
         <div
           className="gauge-arc-fill"
           style={{
@@ -81,7 +83,11 @@ function ConfidenceGauge({ value }) {
   );
 }
 
-function HeroHeader({ metadata }) {
+interface HeroHeaderProps {
+  metadata: Metadata;
+}
+
+function HeroHeader({ metadata }: HeroHeaderProps) {
   const ticker = safe(metadata?.ticker, '\u2014');
   const date = safe(metadata?.trade_date, '\u2014');
   const decision = safe(metadata?.decision, '\u2014');
@@ -111,7 +117,11 @@ function HeroHeader({ metadata }) {
   );
 }
 
-function ExecutiveSummaryCard({ verdictMarkdown }) {
+interface ExecutiveSummaryCardProps {
+  verdictMarkdown?: string;
+}
+
+function ExecutiveSummaryCard({ verdictMarkdown }: ExecutiveSummaryCardProps) {
   const summary = firstSentences(verdictMarkdown, 2);
   if (!summary) return null;
 
@@ -152,8 +162,15 @@ function PipelineVisualization() {
   );
 }
 
-function PriceTargetBox({ label, value, direction }) {
-  // direction: 'up', 'down', or 'neutral'
+type Direction = 'up' | 'down' | 'neutral';
+
+interface PriceTargetBoxProps {
+  label: string;
+  value: number | null | undefined;
+  direction: Direction;
+}
+
+function PriceTargetBox({ label, value, direction }: PriceTargetBoxProps) {
   let tintClass = 'target-box-neutral';
   if (direction === 'up') tintClass = 'target-box-up';
   else if (direction === 'down') tintClass = 'target-box-down';
@@ -166,12 +183,16 @@ function PriceTargetBox({ label, value, direction }) {
   );
 }
 
-function PriceTargetsCard({ researchManager, trader }) {
+interface PriceTargetsCardProps {
+  researchManager?: ResearchManager;
+  trader?: Trader;
+}
+
+function PriceTargetsCard({ researchManager, trader }: PriceTargetsCardProps) {
   const rmTargets = researchManager?.price_targets;
   const trTargets = trader?.price_targets;
 
-  // Determine direction (we compare 90-day vs 30-day to infer direction)
-  function getDirection(targets) {
+  function getDirection(targets: PriceTargets | null | undefined): Direction {
     if (!targets) return 'neutral';
     const d30 = targets.day_30;
     const d90 = targets.day_90;
@@ -205,7 +226,12 @@ function PriceTargetsCard({ researchManager, trader }) {
   );
 }
 
-function ProbabilityBar({ label, probabilities }) {
+interface ProbabilityBarProps {
+  label: string;
+  probabilities?: Probabilities | null;
+}
+
+function ProbabilityBar({ label, probabilities }: ProbabilityBarProps) {
   const bull = probabilities?.bull ?? 0;
   const base = probabilities?.base ?? 0;
   const bear = probabilities?.bear ?? 0;
@@ -248,7 +274,12 @@ function ProbabilityBar({ label, probabilities }) {
   );
 }
 
-function ScenarioProbabilitiesCard({ researchManager, trader }) {
+interface ScenarioProbabilitiesCardProps {
+  researchManager?: ResearchManager;
+  trader?: Trader;
+}
+
+function ScenarioProbabilitiesCard({ researchManager, trader }: ScenarioProbabilitiesCardProps) {
   return (
     <div className="card">
       <h2 className="card-title">Scenario Probabilities</h2>
@@ -280,7 +311,12 @@ function ScenarioProbabilitiesCard({ researchManager, trader }) {
   );
 }
 
-function RiskCard({ researchManager, trader }) {
+interface RiskCardProps {
+  researchManager?: ResearchManager;
+  trader?: Trader;
+}
+
+function RiskCard({ researchManager, trader }: RiskCardProps) {
   const stopLoss = researchManager?.stop_loss ?? trader?.stop_loss;
   const thesisInvalidation = safe(researchManager?.thesis_invalidation);
   const positionSizing = safe(trader?.position_sizing);
@@ -291,13 +327,11 @@ function RiskCard({ researchManager, trader }) {
       <h2 className="card-title">Risk Management</h2>
 
       <div className="risk-layout">
-        {/* Stop-Loss — prominent */}
         <div className="risk-stop-loss">
           <div className="risk-stop-loss-label">Stop-Loss Level</div>
           <div className="risk-stop-loss-value">{fmtPrice(stopLoss)}</div>
         </div>
 
-        {/* Thesis Invalidation — callout */}
         <div className="risk-invalidation-callout">
           <div className="risk-invalidation-header">
             <span className="risk-warning-icon">{'\u26A0'}</span>
@@ -306,7 +340,6 @@ function RiskCard({ researchManager, trader }) {
           <div className="risk-invalidation-text">{thesisInvalidation}</div>
         </div>
 
-        {/* Sub-cards row */}
         <div className="risk-subcards">
           <div className="risk-subcard">
             <div className="risk-subcard-label">Position Sizing</div>
@@ -322,10 +355,14 @@ function RiskCard({ researchManager, trader }) {
   );
 }
 
-function AnalystCard({ name, reportMarkdown }) {
+interface AnalystCardProps {
+  name: string;
+  reportMarkdown?: string;
+}
+
+function AnalystCard({ name, reportMarkdown }: AnalystCardProps) {
   const [expanded, setExpanded] = useState(false);
 
-  // Get a one-line summary (first sentence)
   const summary = firstSentences(reportMarkdown, 1) || 'No report available.';
 
   return (
@@ -348,8 +385,12 @@ function AnalystCard({ name, reportMarkdown }) {
   );
 }
 
-function AnalystReportsSection({ analysts }) {
-  const sections = [
+interface AnalystReportsSectionProps {
+  analysts?: Analysts;
+}
+
+function AnalystReportsSection({ analysts }: AnalystReportsSectionProps) {
+  const sections: Array<{ key: keyof Analysts; label: string }> = [
     { key: 'market', label: 'Market Analyst' },
     { key: 'sentiment', label: 'Sentiment Analyst' },
     { key: 'news', label: 'News Analyst' },
@@ -373,7 +414,11 @@ function AnalystReportsSection({ analysts }) {
 /*  Main Dashboard component                               */
 /* ────────────────────────────────────────────────────── */
 
-export default function Dashboard({ data }) {
+interface DashboardProps {
+  data: StructuredOutput;
+}
+
+export default function Dashboard({ data }: DashboardProps) {
   if (!data) {
     return (
       <div className="dashboard dashboard-empty">
@@ -391,6 +436,8 @@ export default function Dashboard({ data }) {
       <ExecutiveSummaryCard verdictMarkdown={research_manager?.verdict_markdown} />
 
       <PipelineVisualization />
+
+      <TrendVisualization data={data} />
 
       <div className="dashboard-grid">
         <PriceTargetsCard researchManager={research_manager} trader={trader} />

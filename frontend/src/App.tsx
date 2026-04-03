@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
+import type { StructuredOutput } from './types';
 import Dashboard from './components/Dashboard';
 import Newsletter from './components/Newsletter';
 import './App.css';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [view, setView] = useState('dashboard');
+  const [data, setData] = useState<StructuredOutput | null>(null);
+  const [view, setView] = useState<'dashboard' | 'newsletter'>('dashboard');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/data/structured_output.json')
       .then((res) => res.json())
-      .then((json) => {
+      .then((json: StructuredOutput) => {
         setData(json);
         setLoading(false);
       })

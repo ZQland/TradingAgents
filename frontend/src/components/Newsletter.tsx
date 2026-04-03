@@ -1,34 +1,45 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { StructuredOutput, Metadata } from '../types';
 import './Newsletter.css';
+
+/* ────────────────────────────────────────────────────── */
+/*  Types                                                  */
+/* ────────────────────────────────────────────────────── */
+
+interface Heading {
+  text: string;
+  id: string;
+}
+
+type Edition = 'free' | 'premium';
 
 /* ────────────────────────────────────────────────────── */
 /*  Helpers                                               */
 /* ────────────────────────────────────────────────────── */
 
-function safe(value, fallback = '\u2014') {
+function safe(value: unknown, fallback = '\u2014'): string {
   if (value === null || value === undefined || value === '') return fallback;
-  return value;
+  return String(value);
 }
 
-function badgeClass(decision) {
+function badgeClass(decision: string): string {
   const d = (decision || '').toUpperCase();
   if (d === 'BUY') return 'nl-badge-buy';
   if (d === 'SELL') return 'nl-badge-sell';
   return 'nl-badge-hold';
 }
 
-function confidenceColor(value) {
+function confidenceColor(value: number): string {
   if (value >= 70) return '#3fb950';
   if (value >= 40) return '#d29922';
   return '#f85149';
 }
 
-/** Extract h2 headings from markdown for the Table of Contents. */
-function extractHeadings(markdown) {
+function extractHeadings(markdown: string | undefined): Heading[] {
   if (!markdown) return [];
-  const headings = [];
+  const headings: Heading[] = [];
   const regex = /^## +(.+)$/gm;
   let match;
   while ((match = regex.exec(markdown)) !== null) {
@@ -42,8 +53,7 @@ function extractHeadings(markdown) {
   return headings;
 }
 
-/** Generate a slug id from heading text (must match extractHeadings). */
-function slugify(text) {
+function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
@@ -54,7 +64,11 @@ function slugify(text) {
 /*  Scroll Progress Bar                                   */
 /* ────────────────────────────────────────────────────── */
 
-function ScrollProgress({ containerRef }) {
+interface ScrollProgressProps {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function ScrollProgress({ containerRef }: ScrollProgressProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -85,7 +99,7 @@ function ScrollProgress({ containerRef }) {
 /*  Table of Contents — shared scroll-tracking hook       */
 /* ────────────────────────────────────────────────────── */
 
-function useActiveTocId(headings, scrollContainerRef) {
+function useActiveTocId(headings: Heading[], scrollContainerRef: React.RefObject<HTMLDivElement | null>): string {
   const [activeId, setActiveId] = useState('');
 
   useEffect(() => {
@@ -115,9 +129,9 @@ function useActiveTocId(headings, scrollContainerRef) {
   return activeId;
 }
 
-function useScrollToHeading(scrollContainerRef) {
+function useScrollToHeading(scrollContainerRef: React.RefObject<HTMLDivElement | null>): (id: string) => void {
   return useCallback(
-    (id) => {
+    (id: string) => {
       const container = scrollContainerRef.current;
       if (!container) return;
       const target = container.querySelector(`[id="${id}"]`);
@@ -134,7 +148,13 @@ function useScrollToHeading(scrollContainerRef) {
   );
 }
 
-function TocList({ headings, activeId, onSelect }) {
+interface TocListProps {
+  headings: Heading[];
+  activeId: string;
+  onSelect: (id: string) => void;
+}
+
+function TocList({ headings, activeId, onSelect }: TocListProps) {
   return (
     <ul className="nl-toc-list">
       {headings.map((h) => (
@@ -146,8 +166,12 @@ function TocList({ headings, activeId, onSelect }) {
   );
 }
 
-/* Desktop sidebar — hidden on narrow viewports via CSS */
-function TocSidebar({ headings, scrollContainerRef }) {
+interface TocSidebarProps {
+  headings: Heading[];
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function TocSidebar({ headings, scrollContainerRef }: TocSidebarProps) {
   const activeId = useActiveTocId(headings, scrollContainerRef);
   const scrollTo = useScrollToHeading(scrollContainerRef);
   if (headings.length === 0) return null;
@@ -159,13 +183,17 @@ function TocSidebar({ headings, scrollContainerRef }) {
   );
 }
 
-/* Mobile dropdown — hidden on wide viewports via CSS */
-function TocMobile({ headings, scrollContainerRef }) {
+interface TocMobileProps {
+  headings: Heading[];
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function TocMobile({ headings, scrollContainerRef }: TocMobileProps) {
   const [open, setOpen] = useState(false);
   const activeId = useActiveTocId(headings, scrollContainerRef);
   const scrollToRaw = useScrollToHeading(scrollContainerRef);
   const scrollTo = useCallback(
-    (id) => { scrollToRaw(id); setOpen(false); },
+    (id: string) => { scrollToRaw(id); setOpen(false); },
     [scrollToRaw],
   );
   if (headings.length === 0) return null;
@@ -194,7 +222,12 @@ function TocMobile({ headings, scrollContainerRef }) {
 /*  Newsletter Header (ticker, date, decision, conf)     */
 /* ────────────────────────────────────────────────────── */
 
-function NewsletterHeader({ metadata, edition }) {
+interface NewsletterHeaderProps {
+  metadata?: Metadata;
+  edition: Edition;
+}
+
+function NewsletterHeader({ metadata, edition }: NewsletterHeaderProps) {
   const ticker = safe(metadata?.ticker);
   const date = safe(metadata?.trade_date);
   const decision = safe(metadata?.decision);
@@ -242,7 +275,11 @@ function NewsletterHeader({ metadata, edition }) {
 /*  Action buttons (Copy + Print)                         */
 /* ────────────────────────────────────────────────────── */
 
-function ActionButtons({ markdown }) {
+interface ActionButtonsProps {
+  markdown: string;
+}
+
+function ActionButtons({ markdown }: ActionButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
@@ -251,7 +288,6 @@ function ActionButtons({ markdown }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      /* fallback */
       const ta = document.createElement('textarea');
       ta.value = markdown;
       document.body.appendChild(ta);
@@ -283,9 +319,13 @@ function ActionButtons({ markdown }) {
 /*  Main Newsletter component                             */
 /* ────────────────────────────────────────────────────── */
 
-function Newsletter({ data }) {
-  const [activeTab, setActiveTab] = useState('free');
-  const bodyRef = useRef(null);
+interface NewsletterProps {
+  data: StructuredOutput;
+}
+
+function Newsletter({ data }: NewsletterProps) {
+  const [activeTab, setActiveTab] = useState<Edition>('free');
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   const freeMarkdown = data?.newsletters?.free_markdown || '';
   const premiumMarkdown = data?.newsletters?.premium_markdown || '';
@@ -299,8 +339,7 @@ function Newsletter({ data }) {
 
   const isPremium = activeTab === 'premium';
 
-  /* Custom renderers to inject id attributes on h2 for ToC scrolling */
-  const markdownComponents = useMemo(
+  const markdownComponents: Components = useMemo(
     () => ({
       h2({ children }) {
         const text =
@@ -308,7 +347,7 @@ function Newsletter({ data }) {
             ? children
             : Array.isArray(children)
               ? children
-                  .map((c) => (typeof c === 'string' ? c : c?.props?.children ?? ''))
+                  .map((c: unknown) => (typeof c === 'string' ? c : (c as { props?: { children?: string } })?.props?.children ?? ''))
                   .join('')
               : '';
         const id = slugify(String(text));
@@ -321,9 +360,7 @@ function Newsletter({ data }) {
   return (
     <div className="nl-wrapper">
       <div className={`nl-container ${isPremium && headings.length > 0 ? 'nl-container--with-toc' : ''}`}>
-        {/* Main column */}
         <div className="nl-main">
-          {/* Tabs */}
           <div className="nl-tabs">
             <button
               className={`nl-tab nl-tab--free ${activeTab === 'free' ? 'nl-tab--active' : ''}`}
@@ -339,21 +376,16 @@ function Newsletter({ data }) {
             </button>
           </div>
 
-          {/* Newsletter header info */}
           <NewsletterHeader metadata={data?.metadata} edition={activeTab} />
 
-          {/* Action buttons */}
           {hasContent && <ActionButtons markdown={activeMarkdown} />}
 
-          {/* Scroll progress bar */}
           <ScrollProgress containerRef={bodyRef} />
 
-          {/* Mobile ToC (premium only, hidden on desktop via CSS) */}
           {isPremium && headings.length > 0 && (
             <TocMobile headings={headings} scrollContainerRef={bodyRef} />
           )}
 
-          {/* Body */}
           <div className="nl-body" ref={bodyRef}>
             {hasContent ? (
               <ReactMarkdown
@@ -370,7 +402,6 @@ function Newsletter({ data }) {
           </div>
         </div>
 
-        {/* Desktop ToC sidebar (premium only, hidden on mobile via CSS) */}
         {isPremium && headings.length > 0 && (
           <TocSidebar headings={headings} scrollContainerRef={bodyRef} />
         )}

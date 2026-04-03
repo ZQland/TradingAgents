@@ -1,0 +1,607 @@
+/* TrendVisualization.css — Technical trend gauges for dark dashboard */
+
+/* ── Container ─────────────────────────────────────── */
+
+.tv-container {
+  margin-bottom: 20px;
+}
+
+.tv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.tv-main-title {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+  flex-shrink: 0;
+}
+
+.tv-bias-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tv-bias-badge {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.tv-bias-conf {
+  font-size: 12px;
+  color: #8b949e;
+  font-weight: 500;
+}
+
+.tv-current-price {
+  font-size: 13px;
+  color: #8b949e;
+}
+
+.tv-price-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e6edf3;
+}
+
+/* ── Gauge grid ────────────────────────────────────── */
+
+.tv-gauges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.tv-gauge-card {
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tv-gauge-card:hover {
+  border-color: #30363d;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tv-gauge-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #8b949e;
+}
+
+.tv-na-text {
+  font-size: 14px;
+  color: #484f58;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.tv-gauge-signal {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* ── Momentum Gauge ────────────────────────────────── */
+
+.tv-momentum-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tv-momentum-bar {
+  position: relative;
+  display: flex;
+  height: 28px;
+  border-radius: 14px;
+  overflow: visible;
+}
+
+.tv-momentum-zone {
+  flex: 1;
+  position: relative;
+}
+
+.tv-momentum-bearish {
+  background: linear-gradient(90deg, rgba(248, 81, 73, 0.5), rgba(248, 81, 73, 0.15));
+  border-radius: 14px 0 0 14px;
+}
+
+.tv-momentum-neutral {
+  background: rgba(210, 153, 34, 0.15);
+}
+
+.tv-momentum-bullish {
+  background: linear-gradient(90deg, rgba(63, 185, 80, 0.15), rgba(63, 185, 80, 0.5));
+  border-radius: 0 14px 14px 0;
+}
+
+.tv-momentum-marker {
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.tv-momentum-needle {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.tv-momentum-value {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.tv-momentum-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #484f58;
+  padding: 0 2px;
+}
+
+/* ── RSI Gauge ─────────────────────────────────────── */
+
+.tv-rsi-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tv-rsi-bar {
+  position: relative;
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  overflow: visible;
+}
+
+.tv-rsi-zone {
+  position: relative;
+}
+
+.tv-rsi-oversold {
+  flex: 0 0 30%;
+  background: linear-gradient(90deg, rgba(63, 185, 80, 0.45), rgba(63, 185, 80, 0.1));
+  border-radius: 12px 0 0 12px;
+}
+
+.tv-rsi-neutral {
+  flex: 0 0 40%;
+  background: rgba(210, 153, 34, 0.12);
+}
+
+.tv-rsi-overbought {
+  flex: 0 0 30%;
+  background: linear-gradient(90deg, rgba(248, 81, 73, 0.1), rgba(248, 81, 73, 0.45));
+  border-radius: 0 12px 12px 0;
+}
+
+.tv-rsi-marker {
+  position: absolute;
+  top: -3px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.tv-rsi-needle {
+  width: 4px;
+  height: 30px;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.tv-rsi-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #484f58;
+  padding: 0 2px;
+  position: relative;
+}
+
+.tv-rsi-zone-label {
+  position: absolute;
+  transform: translateX(-50%);
+  color: #484f58;
+}
+
+.tv-rsi-readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tv-rsi-value {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.tv-velocity-arrow {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tv-velocity-text {
+  font-size: 11px;
+  color: #484f58;
+  text-align: center;
+}
+
+/* ── Moving Average Status ─────────────────────────── */
+
+.tv-ma-cross-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 18px;
+  border: 2px solid;
+  border-radius: 999px;
+}
+
+.tv-ma-cross-icon {
+  font-size: 16px;
+}
+
+.tv-ma-cross-desc {
+  font-size: 11px;
+  color: #484f58;
+  text-align: center;
+}
+
+.tv-ma-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tv-ma-item {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.tv-ma-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.tv-ma-item-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #c9d1d9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tv-ma-item-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e6edf3;
+}
+
+.tv-ma-item-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tv-ma-relation-badge {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.tv-ma-velocity {
+  font-size: 11px;
+  color: #484f58;
+}
+
+/* ── Trend Strength Meter ──────────────────────────── */
+
+.tv-strength-ring-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.tv-strength-ring {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.6s ease;
+}
+
+.tv-strength-ring-inner {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #0d1117;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.tv-strength-pct {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.tv-strength-side {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tv-strength-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tv-strength-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.tv-strength-detail-label {
+  color: #484f58;
+  font-weight: 500;
+}
+
+.tv-intensity-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d29922;
+  background: rgba(210, 153, 34, 0.12);
+  border: 1px solid rgba(210, 153, 34, 0.25);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+/* ── Volume / Volatility Indicator ─────────────────── */
+
+.tv-vol-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tv-vol-status {
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tv-vol-pct {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.tv-vol-bar-wrapper {
+  margin: 2px 0;
+}
+
+.tv-vol-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #21262d;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tv-vol-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.tv-vol-expansion {
+  display: flex;
+  gap: 8px;
+}
+
+.tv-vol-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b949e;
+  background: #21262d;
+  border-radius: 4px;
+  padding: 3px 10px;
+}
+
+.tv-vol-tag-expand {
+  color: #f85149;
+  background: rgba(248, 81, 73, 0.1);
+}
+
+.tv-vol-tag-contract {
+  color: #3fb950;
+  background: rgba(63, 185, 80, 0.1);
+}
+
+.tv-vol-price-pos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tv-vol-price-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tv-vol-band-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tv-vol-band-track {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(90deg,
+    rgba(63, 185, 80, 0.25),
+    rgba(210, 153, 34, 0.15) 50%,
+    rgba(248, 81, 73, 0.25)
+  );
+  border-radius: 6px;
+}
+
+.tv-vol-band-marker {
+  position: absolute;
+  top: -2px;
+  width: 6px;
+  height: 16px;
+  background: #e6edf3;
+  border-radius: 3px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+  transition: left 0.4s ease;
+}
+
+.tv-vol-band-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #484f58;
+}
+
+.tv-vol-values {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tv-vol-value-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.tv-vol-val-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tv-vol-val-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: #c9d1d9;
+}
+
+/* ── Responsive ────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .tv-gauges-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tv-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .tv-gauges-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tv-bias-badge-row {
+    flex-wrap: wrap;
+  }
+
+  .tv-strength-ring {
+    width: 90px;
+    height: 90px;
+  }
+
+  .tv-strength-ring-inner {
+    width: 66px;
+    height: 66px;
+  }
+
+  .tv-strength-pct {
+    font-size: 18px;
+  }
+}
+
+/* ── Subtle animations ─────────────────────────────── */
+
+@keyframes tv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.tv-momentum-needle {
+  animation: tv-pulse 2.5s ease-in-out infinite;
+}
+
+.tv-rsi-needle {
+  animation: tv-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes tv-ring-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
+  50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.04); }
+}
+
+.tv-strength-ring {
+  animation: tv-ring-glow 3s ease-in-out infinite;
+}
